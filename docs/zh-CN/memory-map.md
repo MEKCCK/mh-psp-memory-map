@@ -18,6 +18,8 @@
 | **[re]** | SiD3W4y/[mhfu-re](https://github.com/SiD3W4y/mhfu-re) `doc/*.txt` | MHFU 运行时结构/函数/OVL |
 | **[cheats]** | 9r3i/[mhp3-cheats](https://github.com/9r3i/mhp3-cheats) | MHP3/MHFU cheat 码、护石技能表 |
 | **[mhef]** | svanheulen/[mhef](https://github.com/svanheulen/mhef) `mhef/psp.py` | PSP MH 存档加密 |
+| **[fuc]** | FUComplete/[FUCTool](https://github.com/FUComplete/FUCTool) / [Patch](https://github.com/FUComplete/Patch) | MHFU 文件替换＋配置打补丁 |
+| **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 补丁（事件加载槽等） |
 | **[val]** | 本项目（MEKCCK/ppsspp 内置 overlay） | 仅做**交叉验证/集成**，不产生新地址 |
 
 > 声明：本表所有内存知识均来自上述两个原作者的**公开项目**，本项目（PPSSPP 内置
@@ -340,6 +342,28 @@ CWCheat → 绝对地址示例（`cheats.md` 内代码）：
 - `mhfu.monweak.txt`（怪物弱点）、`mhfu.armor.skill.txt`（防具技能）、`cheats.md`
   攻击码 —— 验证表语义的数据参考。
 - tclamb/mhp2g-decomp：WIP，暂无公开成果（见 TODO）。
+
+## 17. [fuc] MHFU 文件替换与配置打补丁（FUComplete/FUCTool）
+
+- **文件替换约定**：输入旁生成 `NATIVEPSP` 文件夹，文件放
+  `NATIVEPSP/<DISC_ID>/<文件id>`（如 `NATIVEPSP/ULES00318/5866`）—— 与
+  loader 的 `FILES/<hexid>` 同样按 id 命名（modman / FreedomDX 一致）。
+- **MHFU 文件表**：`res/filelist.csv`（约 195KB）映射文件 id → 路径
+  （如 `0000 → system/dummy`），解释替换 id 的最佳参考。
+- **CONFIG.BIN 选项补丁**：`res/config.json` 定义字节偏移与取值
+  （如 CONFIG.BIN 内偏移 `0x000F`、`0x005D`）—— 配置数据打补丁知识。
+- 模块：Patcher / Configuration / File Replacer / Custom Quests。
+
+## 18. [fdx] MHF1（FreedomDX）补丁 —— MHF1 首批具体地址
+
+| 功能/锚点 | 地址 | 版本 |
+|---|---|---|
+| EventLoader 槽（EN） | `0x095079E0` | MHF1 美版（ULES00318 系） |
+| EventLoader 槽（JP） | `0x094F31E0` | MHF1 日版（ULJM05066） |
+
+- FreedomDX 每个 QoL 功能一个 MIPS 补丁（事件任务加载器、输入丢帧修复、补给箱、
+  Hold-to-Gather 等），`build.py` 统一组装 —— 这些地址补上了本表 MHF1 的空白。
+- 文件替换使用 `FDXDAT/NATIVEPSP/<DISC>/<文件id>`，约定同第 17 节。
 
 ## 7. 交叉验证记录（[val] 本项目所做工作的全部内容）
 
