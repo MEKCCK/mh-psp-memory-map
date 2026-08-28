@@ -15,6 +15,9 @@
 | **[item]** | Kurogami2134/p3rd_item_sets | 道具套装 mod |
 | **[transmog]** | James-028/[mhfu_transmog](https://github.com/James-028/mhfu_transmog) `FINDINGS.md` | MHFU 静态数据表 |
 | **[transmog3]** | Exceen/[mhp3rd_transmog](https://github.com/Exceen/mhp3rd_transmog) `build_data.py` | MHP3RD 装备/武器表（ULJM05800） |
+| **[re]** | SiD3W4y/[mhfu-re](https://github.com/SiD3W4y/mhfu-re) `doc/*.txt` | MHFU 运行时结构/函数/OVL |
+| **[cheats]** | 9r3i/[mhp3-cheats](https://github.com/9r3i/mhp3-cheats) | MHP3/MHFU cheat 码、护石技能表 |
+| **[mhef]** | svanheulen/[mhef](https://github.com/svanheulen/mhef) `mhef/psp.py` | PSP MH 存档加密 |
 | **[val]** | 本项目（MEKCCK/ppsspp 内置 overlay） | 仅做**交叉验证/集成**，不产生新地址 |
 
 > 声明：本表所有内存知识均来自上述两个原作者的**公开项目**，本项目（PPSSPP 内置
@@ -270,6 +273,73 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 | `0x08966598` | 槽位映射跳转表 |
 | `0x08966184` | 按 type 字节索引的处理函数表 |
 
+
+## 11. [re] MHFU 运行时结构（SiD3W4y/mhfu-re `doc/objects.txt`）
+
+| 结构 | 地址 / 偏移 | 字段 |
+|---|---|---|
+| 游戏态 | 指针 @ `0x09C122B0`（game_task.ovl 加载后） | 巨型全局；+0x1220 实体指针列表（0x14 个指针），+0x1270 实体数 u32 |
+| 玩家态 | vtable `0x089BB3CC` | 见下 |
+| — 坐标 | `+0x200 / +0x204 / +0x208` | x / y / z（f32）—— **玩家坐标！** |
+| — 地图入口 | `+0x2A4` | u8（1/2/3） |
+| — HP | `+0x2E4` | u16 |
+| — 本帧伤害 | `+0x3B8` | i32（调用 deal_damage 前取负） |
+| — 物品箱索引 | `+0x55D` | |
+| 怪物态 | 与玩家同布局（坐标/HP/伤害变量同） | |
+| — 实体 id | `+0x1E4` | u8 |
+| — 下一个 id | `+0x1E6` | u16 |
+| — 类型 | `+0x1E8` | u8 —— **== [orig] MHFU 名偏移 `+0x1E8`（互证 ✓）** |
+
+玩家 vtable：[4] 任务开始 `0x09A65498`；[16] 换图 `0x09A655F0`（同时设置坐标）；
+[26] `deal_damage` `0x088D6594`（>0 治疗，<0 受伤；调用点 `0x09A6B77C` 伤害 /
+`0x09A69BCC` 回复）；[27] 玩家动作 `0x09A67630`。
+怪物 vtable：[34] `change_state`（调用点 `0x09AC8B4C`）；[58] 受击处理 `0x09AD4C58`；
+金狮子 vtable `0x089BCD64`。实体类型 0..175 表 = MHFU 怪表（对照 [orig] `monsters_mhfu`）。
+箱子：指针 @ `0x089CC558`，物品数组 @ `+0x390`（u16 物品 id + s16 数量 对）。
+
+## 12. [re] MHFU 关键函数
+
+| 地址 | 函数 |
+|---|---|
+| `0x0884EA1C` | `decrypt_data(全局态, 数据, 大小)` |
+| `0x09A6B130` | 伤害计算（对实体 `+0x3B8` 应用全部修正）—— **伤害数字 hook 候选** |
+| `0x09AC8AF0` | 间接改怪物状态（vtable+0x88） |
+| `0x088D72A4` | `give_item(玩家态, u16 物品id, s16 数量)` |
+
+## 13. [re] OVL 格式与运行时段（`runtime.txt` / `ovl.txt`）
+
+- overlay 在 `psp_game/usrdir/data.bin`（加密档案；用 svanheulen/mhff 或 mhef 解包）。
+- `struct OVLFile`：magic `"MWo3"`、u32 load_base（== eboot 段 vaddr）、load_end、
+  name[0x60]、随后数据；**映射期间头部保留在内存**。
+- 运行时段列表：demo/edit/movie/install/arcade 等任务加载在 `0x09A5F300+`
+  （完整列表见 doc/runtime.txt）。
+
+## 14. [cheats] MHP3 护石技能组合表（节选）＋CWCheat 换算
+
+`mhp3.talisman.txt`（175 行）：双技能组合 id → 技能，例：
+`0001 = Torso Up`、`0101 = Torso Up / Poison`、`0202 = Poison / Sleep`、
+`0404 = Sleep / Health`、`0F0F = Guard / Bomb Boost`、`1010 = Guard Up / Gluttony`……
+完整表见 9r3i/mhp3-cheats。
+
+CWCheat → 绝对地址示例（`cheats.md` 内代码）：
+攻击倍率 `_L 0x200AD964 …` → 绝对地址 **`0x088AD964`**（u32 指令写，+`0x08800000`）。
+库内任何码都按此规则换算。
+
+## 15. [mhef] PSP 存档加密常量（`mhef/psp.py`）
+
+- MHP2G JP 盐 `b'S)R?Bf8xW3#5h9lGU8wR'`、NA `b'3Nc94Hq1zOLh8d62Sb69'`、
+  MHP3 JP `b'VQ(DOdIO9?X3!2GmW#XF'`；SHA-1(数据+盐)。
+- 各版本密钥：MHP `b'>\r\xb2\xef…'`、MHP2 `b'\xe3\xb5\xce…'`、
+  MHP2G `b'\xcd\x1f Y…'`、MHP3 `b"\xe3\x05\xce…"`（完整字节见原文件）。
+- 加密默认键 `(0x2345, 0x7f8d)`；MHP2G/MHP3 例外字节列表。
+- 用途：存档数据挖掘与校验（非运行时内存）。
+
+## 16. 附加数据源（交叉引用，无运行时地址）
+
+- Saramagrean/CWCheat-Database-Plus- —— 泰文 CWCheat 库，含 P3 已测名字编辑（PR #62）；偏移→绝对规则同上。
+- `mhfu.monweak.txt`（怪物弱点）、`mhfu.armor.skill.txt`（防具技能）、`cheats.md`
+  攻击码 —— 验证表语义的数据参考。
+- tclamb/mhp2g-decomp：WIP，暂无公开成果（见 TODO）。
 
 ## 7. 交叉验证记录（[val] 本项目所做工作的全部内容）
 
