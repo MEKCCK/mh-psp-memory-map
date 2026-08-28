@@ -1,45 +1,37 @@
-# 怪物猎人 PSP 系列内存标记表（MH PSP Memory Map）
+# Monster Hunter PSP Series Memory Map (MHF · MHF2 · MHFU · MHP3RD)
 
-覆盖 **MHF / MHF2 / MHFU / MHP3RD**（含 HD 版）的 PSP 虚拟内存地址资料库：
-怪物数据结构、任务状态、玩家、物品、渲染/相机、模组加载管线等。
+PSP virtual memory address database for Monster Hunter PSP titles (MHF/MHF2/MHFU/MHP3RD incl. HD): monster data structures, quest state, player data, items, render/camera, mod loader pipeline.
 
-> 所有地址均为 **PSP 虚拟地址**（实体机与 PPSSPP 一致）。外部工具读模拟器进程内存时
-> 需另加宿主 base；真机 cheat 库常用 "RAM 偏移"（绝对地址 = 偏移 + `0x08800000`）。
-> 详见 [docs/memory-map.md](docs/memory-map.md) 第 0 节。
+> All addresses are **PSP virtual addresses** (identical on real hardware and PPSSPP). External tools reading emulator process memory need the host base address; real-device cheat DBs often use "RAM offsets" (absolute = offset + `0x08800000`).
 
-## 仓库内容
+## Contents
 
-| 文件 | 内容 |
+| File | Description |
 |---|---|
-| [docs/memory-map.md](docs/memory-map.md) | 完整内存表（四游戏）＋地址性质详解＋来源标注 |
-| [docs/digging-guide.md](docs/digging-guide.md) | **如何挖掘新地址**（方法论，含工具与实战思路） |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | **如何提交 PR / 提供公开内存地址** |
+| [Memory Map](docs/en/memory-map.md) | Full table (4 games) + address-nature deep dive + per-entry source tags |
+| [Digging Guide](docs/en/digging-guide.md) | How to discover NEW addresses (5 routes + verification checklist) |
+| [Contributing](docs/en/contributing.md) | How to submit PRs / provide public addresses |
+| [LANGUAGES.md](LANGUAGES.md) | Translation status & how to help translate |
 
-## 快速用法
+## Quick usage
 
-| 场景 | 地址用法 |
+| Scenario | Address to use |
 |---|---|
-| PPSSPP 内置代码 / 内存编辑器 | 绝对地址，如 `0x09B4C244`（箱子第一格） |
-| 真机 cheat 数据库给出"偏移" | 先 +`0x08800000` 再写 |
-| 外部工具（CE / Python） | 还需要模拟器宿主基址（PPSSPP 的 `Memory::base`） |
+| In-PPSSPP code / memory editor | absolute, e.g. `0x09B4C244` (item box slot 1) |
+| Real-device cheat DB "offset" | add `0x08800000` first |
+| External tools (CE/Python) | also need emulator host base (`Memory::base`) |
 
-## 来源与致谢
+## Sources & credits
 
-- 怪物指针/结构偏移：Alexander-Lancellott / [MH-HP-Overlay-For-PSP-Emulator](https://github.com/Alexander-Lancellott/MH-HP-Overlay-For-PSP-Emulator)（Python）
-- P3 扩展地址：Kurogami2134 的
-  [mhp3reload](https://github.com/Kurogami2134/mhp3reload) /
-  [p3rdml_modman](https://github.com/Kurogami2134/p3rdml_modman) /
-  [mhp3rd_monster_hp_bar](https://github.com/Kurogami2134/mhp3rd_monster_hp_bar) /
-  [mhp3rd_dmg_numbers](https://github.com/Kurogami2134/mhp3rd_dmg_numbers) /
-  [p3rd_sharpness_indicator](https://github.com/Kurogami2134/p3rd_sharpness_indicator) /
-  [p3rd_item_sets](https://github.com/Kurogami2134/p3rd_item_sets)
-- 每个条目的具体标记得见 memory-map.md 的"来源标注"
+- Alexander-Lancellott / [MH-HP-Overlay-For-PSP-Emulator](https://github.com/Alexander-Lancellott/MH-HP-Overlay-For-PSP-Emulator) (Python)
+- Kurogami2134: [mhp3reload](https://github.com/Kurogami2134/mhp3reload), [p3rdml_modman](https://github.com/Kurogami2134/p3rdml_modman), [mhp3rd_monster_hp_bar](https://github.com/Kurogami2134/mhp3rd_monster_hp_bar), [mhp3rd_dmg_numbers](https://github.com/Kurogami2134/mhp3rd_dmg_numbers), [p3rd_sharpness_indicator](https://github.com/Kurogami2134/p3rd_sharpness_indicator), [p3rd_item_sets](https://github.com/Kurogami2134/p3rd_item_sets)
 
-## 关联项目
+## Related projects
+- - In-emulator MH HP overlay (PPSSPP build): https://github.com/MEKCCK/ppsspp (`UI/MHOverlay.cpp`)
 
-- **PPSSPP 内置 overlay**（MH HP Overlay 移植，含本表数据的实际使用）：
-  https://github.com/MEKCCK/ppsspp （`UI/MHOverlay.cpp`、`docs/` 曾存放本表，已独立至此）
 
 ## License
+GPL-3.0. Data belongs to the original projects (above); this repo only organizes, annotates and indexes it.
 
-GPL-3.0。表内容归属各原始项目（见上），本仓库仅做整理、标注与索引。
+---
+*English* · [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Português (BR)](README.pt-BR.md) · [Русский](README.ru.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
