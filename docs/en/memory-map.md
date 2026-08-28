@@ -15,6 +15,9 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[item]** | Kurogami2134/p3rd_item_sets |
 | **[transmog]** | James-028/[mhfu_transmog](https://github.com/James-028/mhfu_transmog) `FINDINGS.md` |
 | **[transmog3]** | Exceen/[mhp3rd_transmog](https://github.com/Exceen/mhp3rd_transmog) `build_data.py` |
+| **[re]** | SiD3W4y/[mhfu-re](https://github.com/SiD3W4y/mhfu-re) `doc/*.txt` | MHFU runtime structures/functions/OVL |
+| **[cheats]** | 9r3i/[mhp3-cheats](https://github.com/9r3i/mhp3-cheats) | MHP3/MHFU cheat codes, talisman skill table |
+| **[mhef]** | svanheulen/[mhef](https://github.com/svanheulen/mhef) `mhef/psp.py` | PSP MH save crypto |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
@@ -241,6 +244,76 @@ e.g. `0x08A35890` (current head model file_id), `0x0912F54C`. Only for live tool
 | `0x08966598` | slot-mapping jump table |
 | `0x08966184` | jump-table handler index by type byte |
 
+
+## 11. [re] MHFU runtime structures (SiD3W4y/mhfu-re `doc/objects.txt`)
+
+| Structure | Address / offset | Field |
+|---|---|---|
+| Game state | ptr @ `0x09C122B0` (game_task.ovl loaded) | huge global; +0x1220 entity ptr list (0x14 pters), +0x1270 entity count u32 |
+| Player state | vtable `0x089BB3CC` | see offsets below |
+| — pos | `+0x200 / +0x204 / +0x208` | x / y / z (f32) — **player coordinates!** |
+| — map entry | `+0x2A4` | u8 (1/2/3) |
+| — HP | `+0x2E4` | u16 |
+| — damage this frame | `+0x3B8` | i32 (negated before deal_damage) |
+| — item box index | `+0x55D` | u8/u16 |
+| Monster state | same pos/HP layout as player | |
+| — entity id | `+0x1E4` | u8 |
+| — next id | `+0x1E6` | u16 |
+| — type | `+0x1E8` | u8 — **== [orig] MHFU name offset `+0x1E8` (cross-verified ✓)** |
+
+Player vtable slots: [4] quest start `0x09A65498`; [16] map change `0x09A655F0`
+(also sets position); [26] `deal_damage` `0x088D6594` (damage>0 heal, <0 hurt;
+call sites `0x09A6B77C` dmg / `0x09A69BCC` regen); [27] player action `0x09A67630`.
+Monster vtable: [34] `change_state` (called at `0x09AC8B4C`); [58] hit handler
+`0x09AD4C58`; Rajang vtable `0x089BCD64`. Entity type 0..175 table = MHFU monster
+table (see [orig] `monsters_mhfu`). Item box: ptr @ `0x089CC558`, item array at
+`+0x390` (pairs of u16 object_id, s16 count).
+
+## 12. [re] MHFU key functions
+
+| Address | Function |
+|---|---|
+| `0x0884EA1C` | `decrypt_data(global_state, data, size)` |
+| `0x09A6B130` | damage computation (applies all modifiers to entity `+0x3B8`) — **damage-numbers hook candidate** |
+| `0x09AC8AF0` | indirect monster-state changer (vtable+0x88) |
+| `0x088D72A4` | `give_item(player_state, u16 object_id, s16 count)` |
+
+## 13. [re] OVL format & runtime sections (`runtime.txt` / `ovl.txt`)
+
+- Overlays live in `psp_game/usrdir/data.bin` (encrypted archive; unpack with
+  svanheulen/mhff or mhef).
+- `struct OVLFile`: magic `"MWo3"`, u32 load_base (== section vaddr), load_end,
+  name[0x60], then data; **the header stays in memory while mapped**.
+- Runtime section list shows e.g. demo/edit/movie/install/arcade tasks loaded at
+  `0x09A5F300+` (see doc/runtime.txt for the full list).
+
+## 14. [cheats] MHP3 talisman skill table (excerpt) + CWCheat conversion
+
+`mhp3.talisman.txt` (175 lines): 2-skill-combo id → skills, e.g.
+`0001 = Torso Up`, `0101 = Torso Up / Poison`, `0202 = Poison / Sleep`,
+`0404 = Sleep / Health`, `0F0F = Guard / Bomb Boost`, `1010 = Guard Up / Gluttony`, …
+Full table in the repo (`9r3i/mhp3-cheats`).
+
+CWCheat → absolute conversion example (codes in `cheats.md`):
+Attack multiplier `_L 0x200AD964 …` → absolute **`0x088AD964`** (u32 code write,
+`+0x08800000`). Use the same rule for any code in the DB.
+
+## 15. [mhef] PSP save crypto constants (`mhef/psp.py`)
+
+- MHP2G JP salt `b'S)R?Bf8xW3#5h9lGU8wR'`, NA `b'3Nc94Hq1zOLh8d62Sb69'`,
+  MHP3 JP `b'VQ(DOdIO9?X3!2GmW#XF'`; SHA-1 over data+salt.
+- Per-version keys: MHP `b'>\r\xb2\xef…'`, MHP2 `b'\xe3\xb5\xce…'`,
+  MHP2G `b'\xcd\x1f Y…'`, MHP3 `b"\xe3\x05\xce…"` (see file for full bytes).
+- Encryption key defaults `(0x2345, 0x7f8d)`; MHP2G/MHP3 exception byte lists.
+- Use for save-file data mining & validation (not runtime memory).
+
+## 16. Additional data sources (cross-ref, no runtime addrs)
+
+- Saramagrean/CWCheat-Database-Plus- — Thai CWCheat DB incl. tested P3 name-edit
+  (PR #62); offset→absolute rule applies.
+- `mhfu.monweak.txt` (monster weaknesses), `mhfu.armor.skill.txt` (armor skills),
+  `cheats.md` attack codes — data references for verifying table semantics.
+- tclamb/mhp2g-decomp: WIP, nothing public yet (see TODO).
 
 ## 7. Cross-validation log (all of this project's contribution)
 
