@@ -13,6 +13,8 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[dmg]** | Kurogami2134/mhp3rd_dmg_numbers |
 | **[sharp]** | Kurogami2134/p3rd_sharpness_indicator |
 | **[item]** | Kurogami2134/p3rd_item_sets |
+| **[transmog]** | James-028/[mhfu_transmog](https://github.com/James-028/mhfu_transmog) `FINDINGS.md` |
+| **[transmog3]** | Exceen/[mhp3rd_transmog](https://github.com/Exceen/mhp3rd_transmog) `build_data.py` |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
@@ -174,6 +176,71 @@ mapping (host `Memory::base`) is only needed by external readers.
 | sceIo import table | 0x08960A00+ | 0x08965690+ | **[load]** **[item]** |
 | replacement files dir | ms0:/P3RDML/FILES/ | ms0:/P3RDHDML/FILES/ | **[load]** **[modman]** |
 | animation data region | 0x099C0000 | — | **[modman]** |
+
+## 9. MHFU static data tables [transmog] (source: FINDINGS.md of mhfu_transmog)
+
+> Verified via FUComplete patches / savestate diffs; CWCheat examples confirm the mapping.
+
+| Table | Address | Notes |
+|---|---|---|
+| Weapon table | `0x089574E8` | 24 bytes/entry, ~1149 entries (ends ~`0x0895E0A0`); model id @ `+0x10` (1 byte) |
+| Armor pointer table | `0x08975970` | `type2`-indexed pointers to slot tables |
+| — legs | `0x08970D30` | 40 bytes/entry |
+| — head | `0x08960750` | 40 bytes/entry |
+| — chest | `0x08964B70` | 40 bytes/entry |
+| — arms | `0x08968D10` | 40 bytes/entry |
+| — waist | `0x0896CD48` | 40 bytes/entry (ptr index 5/6 are flags `0x02030007`/`0x04030002`, not pointers) |
+| Model file lookup | `0x0893E7F0` | SHARED across equipment types — do NOT patch |
+| Craft / upgrade table | `0x08938D1A` | |
+| Weapon index table | `0x089A1878` | |
+| FUComplete TABLE_A | `0x089972AC` | u16 array (not used at model-load) |
+| FUComplete TABLE_B | `0x08997BA8` | u16 array (matches modelIdMale) |
+| FUComplete TABLE_E | `0x0899851C` | u16 array |
+
+**Caution (FINDINGS.md):** runtime addresses are unstable across equipment loads —
+e.g. `0x08A35890` (current head model file_id), `0x0912F54C`. Only for live tools,
+**not** for static cheat codes.
+
+## 10. MHP3RD static data tables [transmog3] (ULJM05800, from build_data.py)
+
+### Armor slot tables
+
+| Slot | Base | Entries | Player offset |
+|---|---|---|---|
+| chest | `0x08980144` | 233 | +0x1C |
+| arms | `0x0897DFFC` | 213 | +0x26 |
+| waist | `0x08984DAC` | 214 | +0x30 |
+| legs | `0x08986F1C` | 220 | +0x3A |
+| head | `0x089825AC` | 256 | +0x44 |
+
+### Weapon tables
+
+| type | Weapon | Base | Entry size |
+|---|---|---|---|
+| 5 | Great Sword | `0x08992168` | 28 |
+| 6 | Sword & Shield | `0x0898FA78` | 28 |
+| 7 | Hammer | `0x0898E71C` | 28 |
+| 8 | Lance | `0x08990D64` | 28 |
+| 9 | Heavy Bowgun | `0x0898AB2C` | 80 |
+| 11 | Light Bowgun | `0x0898C01C` | 80 |
+| 12 | Long Sword | `0x08991800` | 28 |
+| 13 | Switch Axe | `0x0898D5D4` | 28 |
+| 14 | Gunlance | `0x089904DC` | 28 |
+| 15 | Bow | `0x089891DC` | 80 |
+| 16 | Dual Blades | `0x0898F164` | 28 |
+| 17 | Hunting Horn | `0x0898DDB4` | 28 |
+
+### Related code addresses (model-load pipeline)
+
+| Address | Meaning |
+|---|---|
+| `0x088691FC` | equipment model-load function (hook target) |
+| `0x0886927C` | wrapper for 80-byte weapon types + armor (`lhu v0,0(v0)`) |
+| `0x088692A0` | wrapper for 28-byte weapon types |
+| `0x08868538`–`0x08868710` | model-load code region |
+| `0x08966598` | slot-mapping jump table |
+| `0x08966184` | jump-table handler index by type byte |
+
 
 ## 7. Cross-validation log (all of this project's contribution)
 
