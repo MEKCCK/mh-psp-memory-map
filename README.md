@@ -11,6 +11,7 @@ PSP virtual memory address database for Monster Hunter PSP titles (MHF/MHF2/MHFU
 | [Memory Map](docs/en/memory-map.md) | Full table (4 games) + address-nature deep dive + per-entry source tags |
 | [Digging Guide](docs/en/digging-guide.md) | How to discover NEW addresses (5 routes + verification checklist) |
 | [Contributing](docs/en/contributing.md) | How to submit PRs / provide public addresses |
+| [Resources](docs/en/resources.md) | Curated index of 30 public MH PSP research projects (addresses/cheats/mods/save tools, P0 picks) |
 | [LANGUAGES.md](LANGUAGES.md) | Translation status & how to help translate |
 
 ## Quick usage
