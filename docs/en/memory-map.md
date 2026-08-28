@@ -18,6 +18,8 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[re]** | SiD3W4y/[mhfu-re](https://github.com/SiD3W4y/mhfu-re) `doc/*.txt` | MHFU runtime structures/functions/OVL |
 | **[cheats]** | 9r3i/[mhp3-cheats](https://github.com/9r3i/mhp3-cheats) | MHP3/MHFU cheat codes, talisman skill table |
 | **[mhef]** | svanheulen/[mhef](https://github.com/svanheulen/mhef) `mhef/psp.py` | PSP MH save crypto |
+| **[fuc]** | FUComplete/[FUCTool](https://github.com/FUComplete/FUCTool) / [Patch](https://github.com/FUComplete/Patch) | MHFU file replacement + config patching |
+| **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 patches (event loader slots etc.) |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
@@ -314,6 +316,29 @@ Attack multiplier `_L 0x200AD964 …` → absolute **`0x088AD964`** (u32 code wr
 - `mhfu.monweak.txt` (monster weaknesses), `mhfu.armor.skill.txt` (armor skills),
   `cheats.md` attack codes — data references for verifying table semantics.
 - tclamb/mhp2g-decomp: WIP, nothing public yet (see TODO).
+
+## 17. [fuc] MHFU file replacement & config patching (FUComplete/FUCTool)
+
+- **File replacement convention**: a `NATIVEPSP` folder next to the input, files at
+  `NATIVEPSP/<DISC_ID>/<fileid>` (e.g. `NATIVEPSP/ULES00318/5866`) — the same
+  id-naming convention as the loaders' `FILES/<hexid>` (modman / FreedomDX mods).
+- **MHFU file table**: `res/filelist.csv` (≈195KB) maps file id → path
+  (e.g. `0000 → system/dummy`). Best reference for interpreting replacement ids.
+- **CONFIG.BIN option patching**: `res/config.json` defines byte offsets & values
+  (e.g. offset `0x000F`, `0x005D` in CONFIG.BIN) — config data patching knowledge.
+- Patcher modules: Patcher / Configuration / File Replacer / Custom Quests.
+
+## 18. [fdx] MHF1 (FreedomDX) patches — first concrete MHF1 addresses
+
+| Feature / anchor | Address | Version |
+|---|---|---|
+| EventLoader slot (EN) | `0x095079E0` | MHF1 USA (ULES00318 family) |
+| EventLoader slot (JP) | `0x094F31E0` | MHF1 JP (ULJM05066) |
+
+- FreedomDX ships one MIPS patch per QoL feature (Event Quest Loader, Input Drop Fix,
+  Instant supply box, Hold-to-Gather, …) — `build.py` assembles all of them;
+  those addresses were previously blank for MHF1 in this table.
+- File replacement uses `FDXDAT/NATIVEPSP/<DISC>/<fileid>` — same convention as #17.
 
 ## 7. Cross-validation log (all of this project's contribution)
 
