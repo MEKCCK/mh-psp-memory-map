@@ -1,0 +1,191 @@
+# Monster Hunter PSP Series — Memory Map (MHF · MHF2 · MHFU · MHP3RD)
+
+All addresses are **PSP virtual addresses** (identical on real hardware and PPSSPP).
+
+## Source Tags
+
+| Tag | Source |
+|---|---|
+| **[orig]** | Alexander-Lancellott / **[MH-HP-Overlay-For-PSP-Emulator](https://github.com/Alexander-Lancellott/MH-HP-Overlay-For-PSP-Emulator)** (Python) — the real origin of the monster pointer tables & offsets; this project only ported/integrated them |
+| **[load]** | Kurogami2134/mhp3reload loader asm (`src/*.asm`) |
+| **[modman]** | Kurogami2134/p3rdml_modman |
+| **[hpbar]** | Kurogami2134/mhp3rd_monster_hp_bar |
+| **[dmg]** | Kurogami2134/mhp3rd_dmg_numbers |
+| **[sharp]** | Kurogami2134/p3rd_sharpness_indicator |
+| **[item]** | Kurogami2134/p3rd_item_sets |
+| **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
+
+> **Attribution:** every piece of memory knowledge in this table comes from the two
+> original authors' **public projects** listed above. The PPSSPP in-emulator overlay
+> only *ported, integrated and cross-checked* already-public data. No address here is
+> an original discovery of this project.
+
+## 0. Address nature & offset rules (IMPORTANT)
+
+- All entries are **PSP virtual addresses**. The PSP memory map is fixed by hardware
+  (user RAM base `0x08800000`), so **real hardware and PPSSPP are identical** —
+  mhp3reload's MIPS patches use these same addresses on a real PSP.
+- The "base offset problem" only exists for **external tools reading the emulator
+  process memory**: PPSSPP maps PSP RAM at an arbitrary host address, so tools
+  (the original Python overlay, Cheat Engine, …) must add a `base_address`
+  (the original overlay obtains it via `SendMessageW(0xB118)`).
+- **This in-emulator overlay reads at PSP virtual addresses directly**
+  (`Memory::ReadUnchecked_*`); PPSSPP does the mapping internally — **no offset**.
+- Version differences to watch:
+  - Original `ULJM05800` vs HD `NPJB40001`: different EBOOT layout → different addresses
+    (tables below give both columns; "N/A" = source mod only implements that version).
+  - Same game + same version: same addresses on hardware and PPSSPP.
+
+### Two addressing conventions (IMPORTANT)
+
+Real-device cheat tools/databases often record addresses as **"RAM offsets"**
+(relative to `0x08800000`), e.g. "item box slot 1 = 0x0134C244". When writing into
+the emulator you **must add the base**:
+
+```
+absolute = offset + 0x08800000
+0x09B4C244 = 0x0134C244 + 0x08800000     (ITEM_BOX, cross-verified ✓)
+```
+
+| Use | Address form |
+|---|---|
+| In-emulator code / PPSSPP memory editor | absolute `0x09xxxxxx` |
+| Real-device cheat DB "offset" | absolute = offset + `0x08800000` |
+| External tools reading the process | also add host base (`Memory::base`) |
+| Real-device "immediate write" | uncached mirror `0x4xxxxxxx` (optional) |
+
+### PSP virtual address space (why 0x08800000)
+
+```
+0x00000000 – 0x03FFFFFF   reserved / user area (games don't use it)
+0x04000000 – 0x041FFFFF  VRAM (GE, 512KB)
+0x08000000 – 0x087FFFFF   RAM region head (reserved/aliased, unusable)
+0x08800000 – 0x09FFFFFF  ★ main RAM (user RAM)
+                          ├ 0x08804000-ish: game ELF/EBOOT entry
+                          ├ 0x0880xxxx–0x0886xxxx: game code (hooks live here)
+                          ├ 0x0896xxxx: sceIo import/jump table
+                          ├ 0x089Exxxx: preload data segment
+                          ├ 0x09B4xxxx / 0x09BAxxxx: items / box / pouches
+                          ├ 0x09DA9860: MHP3RD monster list pointer
+                          └ 0x09F00000+: Slim/64MB extended RAM (loader workspace 0x09FA2100)
+0x40000000 + addr          uncached mirror of main RAM
+0x48000000 + addr          uncached mirror (0x08800000-based)
+0x88000000 + addr          kernel-access mirror (user mode unusable)
+```
+
+Key points: the base is fixed by hardware (PPSSPP MemMap.cpp comment:
+"only from 0x08800000 is it usable"); game pointers ARE absolute addresses;
+real-device cheat tools may use `0x4xxxxxxx` uncached writes; the emulator-internal
+mapping (host `Memory::base`) is only needed by external readers.
+
+## 1. Monster data (ALL games)
+
+> Tables below come from **[orig]** (Python overlay project).
+> Usage: list pointer = `0x08800000 + initial` → monster list `pointer[i]` (4 bytes),
+> non-zero = alive monster → monster struct; offsets are relative to the struct.
+> Name byte → monster tables in `UI/monster_tables.inc` of the overlay (per game).
+
+### 1.1 MHF / MHP (ULES00318 / ULUS10084 / ULJM05066)
+
+| Disc ID | List ptr (initial) | Name | HP | MaxHP | Size | Poison cur/max | Sleep cur/max | Para cur/max | Dizzy cur/max | Rage(u16) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ULES00318 | 0x1254D70 | +0x210 | +0x312 | +0x43C | +0x2A4 | 0x3A8/0x46C | 0x462/0x460 | 0x474/0x472 | — | 0x580 |
+| ULUS10084 | 0x1253F70 | +0x210 | +0x312 | +0x43C | +0x2A4 | 0x3A8/0x46C | 0x462/0x460 | 0x474/0x472 | — | 0x580 |
+| ULJM05066 | 0x1253570 | +0x210 | +0x312 | +0x43C | +0x2A4 | 0x3A8/0x46C | 0x462/0x460 | 0x474/0x472 | — | 0x580 |
+
+### 1.2 MHF2 / MHP2 (ULES00851 / ULUS10266 / ULJM05156)
+
+| Disc ID | List ptr (initial) | Name | HP | MaxHP | Size | Poison | Sleep | Para | Dizzy | Rage |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ULES00851 | 0x127AD70 | +0x1E8 | +0x2E2 | +0x41E | +0x274 | 0x388/0x450 | 0x446/0x444 | 0x458/0x456 | 0x440/0x55E | 0x564 |
+| ULUS10266 | 0x12799F0 | +0x1E8 | +0x2E2 | +0x41E | +0x274 | 0x388/0x450 | 0x446/0x444 | 0x458/0x456 | 0x440/0x55E | 0x564 |
+| ULJM05156 | 0x1278E70 | +0x1E8 | +0x2E2 | +0x41E | +0x274 | 0x388/0x450 | 0x446/0x444 | 0x458/0x456 | 0x440/0x55E | 0x564 |
+
+### 1.3 MHFU / MHP2G (ULES01213 / ULUS10391 / ULJM05500)
+
+| Disc ID | List ptr (initial) | Name | HP | MaxHP | Size | Poison | Sleep | Para | Dizzy | Rage |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ULES01213 | 0x1412140 | +0x1E8 | +0x2E4 | +0x41E | +0x274 | 0x388/0x450 | 0x446/0x444 | 0x458/0x456 | 0x440/0x566 | 0x56C |
+| ULUS10391 | 0x1412240 | +0x1E8 | +0x2E4 | +0x41E | +0x274 | 0x388/0x450 | 0x446/0x444 | 0x458/0x456 | 0x440/0x566 | 0x56C |
+| ULJM05500 | 0x140D3C0 | +0x1E8 | +0x2E4 | +0x41E | +0x274 | 0x388/0x450 | 0x446/0x444 | 0x458/0x456 | 0x440/0x566 | 0x56C |
+
+### 1.4 MHP3RD / HD (ULJM05800 / NPJB40001)
+
+| Disc ID | List ptr (initial) | Name | HP | MaxHP | Size | Poison | Sleep | Para | Dizzy | Rage |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ULJM05800 | 0x15A9860 | +0x62 | +0x246 | +0x288 | +0xD4 | 0x23C/0x252 | 0x24E/0x24C | 0x25A/0x258 | 0xC5C/0xC5E | 0xBC8 |
+| NPJB40001 | 0x19B0AE0 | +0x62 | +0x246 | +0x288 | +0xD4 | 0x23C/0x252 | 0x24E/0x24C | 0x25A/0x258 | 0xC5C/0xC5E | 0xBC8 |
+
+> MHP3RD offsets cross-verified with **[hpbar]**:
+> list pointer `0x09DA9860 == 0x08800000 + 0x15A9860` ✅, HP `+0x246`, MaxHP `+0x288` ✅
+
+## 2. P3-only extension: quest / game state (only P3 has public data; other versions TODO)
+
+| Field | ULJM05800 | NPJB40001 | Source |
+|---|---|---|---|
+| in-quest flag (near magic 0x656D6167) | 0x09C57CA0 | 0x0A05E620 | **[hpbar]**(orig) **[dmg]** |
+| returning/quest phase byte (<3 check) | 0x09BAC044 | N/A | **[hpbar]** |
+| loading screen flag | 0x08AB49EC | N/A | **[hpbar]** |
+
+## 3. P3-only extension: player data
+
+| Field | ULJM05800 | NPJB40001 | Source |
+|---|---|---|---|
+| player_area | 0x08B24979 | 0x08B2B139 | **[dmg]** |
+| equipped weapon struct | 0x09B49234 | 0x09F4FCE4 | **[sharp]** |
+| sharpness (in weapon struct) | 0x09B49234+0x5CC | 0x09F4FCE4+0x5DC | **[sharp]** |
+| sharpness table | 0x0897D728 | 0x08983060 | **[sharp]** |
+| sprite info | 0x08B268DC | 0x08B2D09C | **[sharp]** |
+
+## 4. P3-only extension: items
+
+| Field | ULJM05800 | NPJB40001 | Source |
+|---|---|---|---|
+| item box ITEM_BOX | 0x09B4C244 | 0x09F52CF4 | **[item]** |
+| pouch 1 ITEM_POUCH1 | 0x09BA8D4A | 0x09FAF7FE | **[item]** |
+| pouch 2 ITEM_POUCH2 | 0x09B4D9B4 | 0x09F54464 | **[item]** |
+| give-item function GIVE_ITEM | 0x09CD0440 | 0x0A0D20A8 | **[item]** |
+| button-hold check CONTROL_HOLD | 0x09BB7A64 | 0x09FBE764 | **[item]** |
+
+## 5. P3-only extension: render / camera (damage numbers, minimap, free cam)
+
+| Field | ULJM05800 | NPJB40001 | Source |
+|---|---|---|---|
+| ViewMatrix (world→screen) | 0x09B486B0 | 0x09F4F120 | **[dmg]** |
+| main render hook / ret | 0x088E6D64 / 0x088EBAB8 | 0x088E881C / 0x088EE410 | **[dmg]** |
+| printf (on-screen text) | 0x088EAA64 | 0x088EC51C | **[dmg]** |
+| damage-number ADD hook / ret | 0x09C750FC / 0x09C953E0 | 0x0A07BA7C / 0x0A09BD60 | **[dmg]** |
+| print settings PRINT_SETTINGS | 0x09ADB910 | 0x09EE2350 | **[dmg]** |
+| damage check CHECK | 0x09C1EC70 | 0x0A025608 | **[dmg]** |
+| sceGeListEnQueue | 0x08960CF8 | N/A | **[hpbar]** |
+| HP-bar mod staging area | 0x08800FF0 | N/A | **[hpbar]** |
+
+## 6. P3/HD-only: filesystem / mod loader pipeline
+
+| Name | ULJM05800 | NPJB40001 | Source |
+|---|---|---|---|
+| EBOOT_LOAD | 0x0880134C | 0x0880134C | **[load]** |
+| PRELOAD_HOOK | 0x088215D4 | 0x08821818 | **[load]** |
+| PRELOAD_INIT | 0x089E02A0 | 0x089DFE60 | **[load]** |
+| file read hook | 0x0886242C | 0x0886365C | **[load]** |
+| file seek hook | 0x08864390 | 0x088655C0 | **[load]** |
+| crypto hook | 0x088641F0 | 0x08865420 | **[load]** |
+| mod table workspace | 0x09FA2100 (+0x800 table) | 0x083B5600 | **[load]** |
+| sceIo import table | 0x08960A00+ | 0x08965690+ | **[load]** **[item]** |
+| replacement files dir | ms0:/P3RDML/FILES/ | ms0:/P3RDHDML/FILES/ | **[load]** **[modman]** |
+| animation data region | 0x099C0000 | — | **[modman]** |
+
+## 7. Cross-validation log (all of this project's contribution)
+
+- `0x09DA9860` (hpbar monster list) == `0x08800000 + 0x15A9860` (orig table) ✅
+- Monster HP `+0x246`, MaxHP `+0x288` (hpbar) == orig MHP3RD table ✅
+- sceIo import table (load/item agree) ✅
+
+## 8. TODO
+
+- Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
+- Quest info region (name/time/rewards)
+- Player stats (attack/defense/skills)
+- Hitzone/fatigue tables (file-id route + `MHP3rd-Game-FIle-List`)
+- **MHF / MHF2 / MHFU player/item/render regions** (only monster tables exist so far)
+- Second-source confirmation of HD monster struct offsets
