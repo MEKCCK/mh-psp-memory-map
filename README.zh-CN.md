@@ -11,7 +11,6 @@ PSP 怪物猎人系列（MHF/MHF2/MHFU/MHP3RD，含 HD）的 PSP 虚拟内存地
 | [内存表](docs/zh-CN/memory-map.md) | 完整表（四游戏）＋地址性质详解＋逐条来源标注 |
 | [挖掘指南](docs/zh-CN/digging-guide.md) | 如何发现新地址（5 条路线＋验证清单） |
 | [贡献指南](docs/zh-CN/contributing.md) | 如何提 PR / 提供公开内存地址 |
-| [资源索引](docs/zh-CN/resources.md) | 30 个公开 MH PSP 研究项目清单（地址/作弊/模组/存档工具，P0 精选） |
 | [LANGUAGES.md](LANGUAGES.md) | 翻译状态与如何参与翻译 |
 
 ## 快速用法
