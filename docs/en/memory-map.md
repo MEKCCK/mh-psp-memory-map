@@ -87,6 +87,9 @@ mapping (host `Memory::base`) is only needed by external readers.
 > Usage: list pointer = `0x08800000 + initial` → monster list `pointer[i]` (4 bytes),
 > non-zero = alive monster → monster struct; offsets are relative to the struct.
 > Name byte → monster tables in `UI/monster_tables.inc` of the overlay (per game).
+>
+> **Types**: name `u8`; HP/MaxHP `u32`; size `u16`; status pairs `u16` (cur/max);
+> rage `u16` (frames, /60 = seconds); list pointer `u32`; struct pointer chain (ptr → struct).
 
 ### 1.1 MHF / MHP (ULES00318 / ULUS10084 / ULJM05066)
 
@@ -126,6 +129,8 @@ mapping (host `Memory::base`) is only needed by external readers.
 | Field | ULJM05800 | NPJB40001 | Source |
 |---|---|---|---|
 | in-quest flag (near magic 0x656D6167) | 0x09C57CA0 | 0x0A05E620 | **[hpbar]**(orig) **[dmg]** |
+
+> Types: in-quest = `u32` value at pointer (lw-read); phase/loading = `u8` (lb-read).
 | returning/quest phase byte (<3 check) | 0x09BAC044 | N/A | **[hpbar]** |
 | loading screen flag | 0x08AB49EC | N/A | **[hpbar]** |
 
@@ -138,6 +143,9 @@ mapping (host `Memory::base`) is only needed by external readers.
 | sharpness table | 0x0897D728 | 0x08983060 | **[sharp]** |
 | sprite info | 0x08B268DC | 0x08B2D09C | **[sharp]** |
 
+> Types: sharpness `u16` @ weapon+offset; sharpness table `u16` array; weapon struct
+> base known, full layout unverified; player_area layout unknown.
+
 ## 4. P3-only extension: items
 | Field | ULJM05800 | NPJB40001 | Source |
 |---|---|---|---|
@@ -146,6 +154,9 @@ mapping (host `Memory::base`) is only needed by external readers.
 | pouch 2 ITEM_POUCH2 | 0x09B4D9B4 | 0x09F54464 | **[item]** |
 | give-item function GIVE_ITEM | 0x09CD0440 | 0x0A0D20A8 | **[item]** |
 | button-hold check CONTROL_HOLD | 0x09BB7A64 | 0x09FBE764 | **[item]** |
+
+> Item entries: **4 bytes LE** — hi `u16` = count, lo `u16` = item id
+> (see §12 and mhfu-re itembox `+0x390` pair layout).
 
 ## 5. P3-only extension: render / camera (damage numbers, minimap, free cam)
 | Field | ULJM05800 | NPJB40001 | Source |
@@ -158,6 +169,9 @@ mapping (host `Memory::base`) is only needed by external readers.
 | damage check CHECK | 0x09C1EC70 | 0x0A025608 | **[dmg]** |
 | sceGeListEnQueue | 0x08960CF8 | N/A | **[hpbar]** |
 | HP-bar mod staging area | 0x08800FF0 | N/A | **[hpbar]** |
+
+> Types: ViewMatrix = `f32[16]` (4×4); printf = code func; CHECK/ADD values `u32`;
+> matrix element layout unverified.
 
 ## 6. P3/HD-only: filesystem / mod loader pipeline
 | Name | ULJM05800 | NPJB40001 | Source |
@@ -192,6 +206,12 @@ mapping (host `Memory::base`) is only needed by external readers.
 | FUComplete TABLE_B | `0x08997BA8` | u16 array (matches modelIdMale) |
 | FUComplete TABLE_E | `0x0899851C` | u16 array |
 
+**Entry layout (partial, from FINDINGS.md code examples):**
+- Weapon entry (24B): model id `u8` @ `+0x10` (verified via 8-bit CWCheat writes);
+  remaining fields unverified.
+- Armor entry (40B): model fields near `+0x10` (male/female `u16` pair per examples),
+  rest unverified.
+
 **Caution (FINDINGS.md):** runtime addresses are unstable across equipment loads —
 e.g. `0x08A35890` (current head model file_id), `0x0912F54C`. Only for live tools,
 **not** for static cheat codes.
@@ -223,6 +243,9 @@ e.g. `0x08A35890` (current head model file_id), `0x0912F54C`. Only for live tool
 | 15 | Bow | `0x089891DC` | 80 |
 | 16 | Dual Blades | `0x0898F164` | 28 |
 | 17 | Hunting Horn | `0x0898DDB4` | 28 |
+
+> Entry sizes known; field layout not public yet (transmog hooks the model-load
+> wrappers to edit model ids, so it does not document local table fields).
 
 ### Related code addresses (model-load pipeline)
 
@@ -286,7 +309,7 @@ table (see [orig] `monsters_mhfu`). Item box: ptr @ `0x089CC558`, item array at
 | Psychic (千里眼) cooldown | `0x00E4A496` | `0x0964A496` | u16 |
 | Pouch slot 1 | `0x017AF7FE` | `0x09FAF7FE` | 4B: hi u16 = count, lo u16 = item id |
 | Item box slot 1 | `0x01752CF4` | `0x09F52CF4` | 4B, same layout as pouch |
-| Equipment box slot 1 | `0x0174FE14` | `0x09F4FE14` | 12B |
+| Equipment box slot 1 | `0x0174FE14` | `0x09F4FE14` | 12B (layout unverified) |
 | Hunter name | `0x0174FCAC` | `0x09F4FCAC` | 24B, **UTF-16LE**, first char = low u16 at base |
 
 > Cross-verified: pouch/box absolute addresses == [item] HD table (`0x09FAF7FE` / `0x09F52CF4`) ✓
