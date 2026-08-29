@@ -6,17 +6,17 @@
 
 Status legend: ✅ 完成 · 🟡 部分 · ⬜ 待翻译/待创建
 
-| Language | Code | README | docs/memory-map | docs/digging-guide | docs/contributing | docs/resources |
-|---|---|---|---|---|---|---|
-| English | en | ✅ `README.md` | ✅ `docs/en/` | ✅ `docs/en/` | ✅ `docs/en/` | ✅ `docs/en/` |
-| 简体中文 | zh-CN | ✅ `README.zh-CN.md` | ✅ `docs/zh-CN/` | ✅ `docs/zh-CN/` | ✅ `docs/zh-CN/` | ✅ `docs/zh-CN/` |
-| 日本語 | ja | ✅ `README.ja.md` | ⬜ `docs/ja/` | ⬜ | ⬜ | ⬜ |
-| 한국어 | ko | ✅ `README.ko.md` | ⬜ `docs/ko/` | ⬜ | ⬜ | ⬜ |
-| Español | es | ✅ `README.es.md` | ⬜ `docs/es/` | ⬜ | ⬜ | ⬜ |
+| Language | Code | README | docs/memory-map | docs/digging-guide | docs/contributing |
+|---|---|---|---|---|---|
+| English | en | ✅ `README.md` | ✅ `docs/en/` | ✅ `docs/en/` | ✅ `docs/en/` |
+| 简体中文 | zh-CN | ✅ `README.zh-CN.md` | ✅ `docs/zh-CN/` | ✅ `docs/zh-CN/` | ✅ `docs/zh-CN/` |
+| 日本語 | ja | ✅ `README.ja.md` | ⬜ `docs/ja/` | ⬜ | ⬜ |
+| 한국어 | ko | ✅ `README.ko.md` | ⬜ `docs/ko/` | ⬜ | ⬜ |
+| Español | es | ✅ `README.es.md` | ⬜ `docs/es/` | ⬜ | ⬜ |
 | Português (BR) | pt-BR | ✅ `README.pt-BR.md` | ⬜ `docs/pt-BR/` | ⬜ | ⬜ |
-| Русский | ru | ✅ `README.ru.md` | ⬜ `docs/ru/` | ⬜ | ⬜ | ⬜ |
-| Français | fr | ✅ `README.fr.md` | ⬜ `docs/fr/` | ⬜ | ⬜ | ⬜ |
-| Deutsch | de | ✅ `README.de.md` | ⬜ `docs/de/` | ⬜ | ⬜ | ⬜ |
+| Русский | ru | ✅ `README.ru.md` | ⬜ `docs/ru/` | ⬜ | ⬜ |
+| Français | fr | ✅ `README.fr.md` | ⬜ `docs/fr/` | ⬜ | ⬜ |
+| Deutsch | de | ✅ `README.de.md` | ⬜ `docs/de/` | ⬜ | ⬜ |
 
 ## 如何添加一种新语言的 docs（How to add a language's docs）
 
