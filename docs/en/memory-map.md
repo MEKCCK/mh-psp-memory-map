@@ -16,9 +16,6 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[transmog]** | James-028/[mhfu_transmog](https://github.com/James-028/mhfu_transmog) `FINDINGS.md` |
 | **[transmog3]** | Exceen/[mhp3rd_transmog](https://github.com/Exceen/mhp3rd_transmog) `build_data.py` |
 | **[re]** | SiD3W4y/[mhfu-re](https://github.com/SiD3W4y/mhfu-re) `doc/*.txt` | MHFU runtime structures/functions/OVL |
-| **[cheats]** | 9r3i/[mhp3-cheats](https://github.com/9r3i/mhp3-cheats) | MHP3/MHFU cheat codes, talisman skill table |
-| **[mhef]** | svanheulen/[mhef](https://github.com/svanheulen/mhef) `mhef/psp.py` | PSP MH save crypto |
-| **[fuc]** | FUComplete/[FUCTool](https://github.com/FUComplete/FUCTool) / [Patch](https://github.com/FUComplete/Patch) | MHFU file replacement + config patching |
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 patches (event loader slots etc.) |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 
@@ -28,7 +25,6 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 > an original discovery of this project.
 
 ## 0. Address nature & offset rules (IMPORTANT)
-
 - All entries are **PSP virtual addresses**. The PSP memory map is fixed by hardware
   (user RAM base `0x08800000`), so **real hardware and PPSSPP are identical** —
   mhp3reload's MIPS patches use these same addresses on a real PSP.
@@ -86,7 +82,6 @@ real-device cheat tools may use `0x4xxxxxxx` uncached writes; the emulator-inter
 mapping (host `Memory::base`) is only needed by external readers.
 
 ## 1. Monster data (ALL games)
-
 > Tables below come from **[orig]** (Python overlay project).
 > Usage: list pointer = `0x08800000 + initial` → monster list `pointer[i]` (4 bytes),
 > non-zero = alive monster → monster struct; offsets are relative to the struct.
@@ -127,7 +122,6 @@ mapping (host `Memory::base`) is only needed by external readers.
 > list pointer `0x09DA9860 == 0x08800000 + 0x15A9860` ✅, HP `+0x246`, MaxHP `+0x288` ✅
 
 ## 2. P3-only extension: quest / game state (only P3 has public data; other versions TODO)
-
 | Field | ULJM05800 | NPJB40001 | Source |
 |---|---|---|---|
 | in-quest flag (near magic 0x656D6167) | 0x09C57CA0 | 0x0A05E620 | **[hpbar]**(orig) **[dmg]** |
@@ -135,7 +129,6 @@ mapping (host `Memory::base`) is only needed by external readers.
 | loading screen flag | 0x08AB49EC | N/A | **[hpbar]** |
 
 ## 3. P3-only extension: player data
-
 | Field | ULJM05800 | NPJB40001 | Source |
 |---|---|---|---|
 | player_area | 0x08B24979 | 0x08B2B139 | **[dmg]** |
@@ -145,7 +138,6 @@ mapping (host `Memory::base`) is only needed by external readers.
 | sprite info | 0x08B268DC | 0x08B2D09C | **[sharp]** |
 
 ## 4. P3-only extension: items
-
 | Field | ULJM05800 | NPJB40001 | Source |
 |---|---|---|---|
 | item box ITEM_BOX | 0x09B4C244 | 0x09F52CF4 | **[item]** |
@@ -155,7 +147,6 @@ mapping (host `Memory::base`) is only needed by external readers.
 | button-hold check CONTROL_HOLD | 0x09BB7A64 | 0x09FBE764 | **[item]** |
 
 ## 5. P3-only extension: render / camera (damage numbers, minimap, free cam)
-
 | Field | ULJM05800 | NPJB40001 | Source |
 |---|---|---|---|
 | ViewMatrix (world→screen) | 0x09B486B0 | 0x09F4F120 | **[dmg]** |
@@ -168,7 +159,6 @@ mapping (host `Memory::base`) is only needed by external readers.
 | HP-bar mod staging area | 0x08800FF0 | N/A | **[hpbar]** |
 
 ## 6. P3/HD-only: filesystem / mod loader pipeline
-
 | Name | ULJM05800 | NPJB40001 | Source |
 |---|---|---|---|
 | EBOOT_LOAD | 0x0880134C | 0x0880134C | **[load]** |
@@ -182,8 +172,7 @@ mapping (host `Memory::base`) is only needed by external readers.
 | replacement files dir | ms0:/P3RDML/FILES/ | ms0:/P3RDHDML/FILES/ | **[load]** **[modman]** |
 | animation data region | 0x099C0000 | — | **[modman]** |
 
-## 9. MHFU static data tables [transmog] (source: FINDINGS.md of mhfu_transmog)
-
+## 7. MHFU static data tables [transmog] (source: FINDINGS.md of mhfu_transmog)
 > Verified via FUComplete patches / savestate diffs; CWCheat examples confirm the mapping.
 
 | Table | Address | Notes |
@@ -206,8 +195,7 @@ mapping (host `Memory::base`) is only needed by external readers.
 e.g. `0x08A35890` (current head model file_id), `0x0912F54C`. Only for live tools,
 **not** for static cheat codes.
 
-## 10. MHP3RD static data tables [transmog3] (ULJM05800, from build_data.py)
-
+## 8. MHP3RD static data tables [transmog3] (ULJM05800, from build_data.py)
 ### Armor slot tables
 
 | Slot | Base | Entries | Player offset |
@@ -247,8 +235,7 @@ e.g. `0x08A35890` (current head model file_id), `0x0912F54C`. Only for live tool
 | `0x08966184` | jump-table handler index by type byte |
 
 
-## 11. [re] MHFU runtime structures (SiD3W4y/mhfu-re `doc/objects.txt`)
-
+## 9. [re] MHFU runtime structures (SiD3W4y/mhfu-re `doc/objects.txt`)
 | Structure | Address / offset | Field |
 |---|---|---|
 | Game state | ptr @ `0x09C122B0` (game_task.ovl loaded) | huge global; +0x1220 entity ptr list (0x14 pters), +0x1270 entity count u32 |
@@ -271,8 +258,7 @@ Monster vtable: [34] `change_state` (called at `0x09AC8B4C`); [58] hit handler
 table (see [orig] `monsters_mhfu`). Item box: ptr @ `0x089CC558`, item array at
 `+0x390` (pairs of u16 object_id, s16 count).
 
-## 12. [re] MHFU key functions
-
+## 10. [re] MHFU key functions
 | Address | Function |
 |---|---|
 | `0x0884EA1C` | `decrypt_data(global_state, data, size)` |
@@ -280,56 +266,7 @@ table (see [orig] `monsters_mhfu`). Item box: ptr @ `0x089CC558`, item array at
 | `0x09AC8AF0` | indirect monster-state changer (vtable+0x88) |
 | `0x088D72A4` | `give_item(player_state, u16 object_id, s16 count)` |
 
-## 13. [re] OVL format & runtime sections (`runtime.txt` / `ovl.txt`)
-
-- Overlays live in `psp_game/usrdir/data.bin` (encrypted archive; unpack with
-  svanheulen/mhff or mhef).
-- `struct OVLFile`: magic `"MWo3"`, u32 load_base (== section vaddr), load_end,
-  name[0x60], then data; **the header stays in memory while mapped**.
-- Runtime section list shows e.g. demo/edit/movie/install/arcade tasks loaded at
-  `0x09A5F300+` (see doc/runtime.txt for the full list).
-
-## 14. [cheats] MHP3 talisman skill table (excerpt) + CWCheat conversion
-
-`mhp3.talisman.txt` (175 lines): 2-skill-combo id → skills, e.g.
-`0001 = Torso Up`, `0101 = Torso Up / Poison`, `0202 = Poison / Sleep`,
-`0404 = Sleep / Health`, `0F0F = Guard / Bomb Boost`, `1010 = Guard Up / Gluttony`, …
-Full table in the repo (`9r3i/mhp3-cheats`).
-
-CWCheat → absolute conversion example (codes in `cheats.md`):
-Attack multiplier `_L 0x200AD964 …` → absolute **`0x088AD964`** (u32 code write,
-`+0x08800000`). Use the same rule for any code in the DB.
-
-## 15. [mhef] PSP save crypto constants (`mhef/psp.py`)
-
-- MHP2G JP salt `b'S)R?Bf8xW3#5h9lGU8wR'`, NA `b'3Nc94Hq1zOLh8d62Sb69'`,
-  MHP3 JP `b'VQ(DOdIO9?X3!2GmW#XF'`; SHA-1 over data+salt.
-- Per-version keys: MHP `b'>\r\xb2\xef…'`, MHP2 `b'\xe3\xb5\xce…'`,
-  MHP2G `b'\xcd\x1f Y…'`, MHP3 `b"\xe3\x05\xce…"` (see file for full bytes).
-- Encryption key defaults `(0x2345, 0x7f8d)`; MHP2G/MHP3 exception byte lists.
-- Use for save-file data mining & validation (not runtime memory).
-
-## 16. Additional data sources (cross-ref, no runtime addrs)
-
-- Saramagrean/CWCheat-Database-Plus- — Thai CWCheat DB incl. tested P3 name-edit
-  (PR #62); offset→absolute rule applies.
-- `mhfu.monweak.txt` (monster weaknesses), `mhfu.armor.skill.txt` (armor skills),
-  `cheats.md` attack codes — data references for verifying table semantics.
-- tclamb/mhp2g-decomp: WIP, nothing public yet (see TODO).
-
-## 17. [fuc] MHFU file replacement & config patching (FUComplete/FUCTool)
-
-- **File replacement convention**: a `NATIVEPSP` folder next to the input, files at
-  `NATIVEPSP/<DISC_ID>/<fileid>` (e.g. `NATIVEPSP/ULES00318/5866`) — the same
-  id-naming convention as the loaders' `FILES/<hexid>` (modman / FreedomDX mods).
-- **MHFU file table**: `res/filelist.csv` (≈195KB) maps file id → path
-  (e.g. `0000 → system/dummy`). Best reference for interpreting replacement ids.
-- **CONFIG.BIN option patching**: `res/config.json` defines byte offsets & values
-  (e.g. offset `0x000F`, `0x005D` in CONFIG.BIN) — config data patching knowledge.
-- Patcher modules: Patcher / Configuration / File Replacer / Custom Quests.
-
-## 18. [fdx] MHF1 (FreedomDX) patches — first concrete MHF1 addresses
-
+## 11. [fdx] MHF1 (FreedomDX) patches — first concrete MHF1 addresses
 | Feature / anchor | Address | Version |
 |---|---|---|
 | EventLoader slot (EN) | `0x095079E0` | MHF1 USA (ULES00318 family) |
@@ -340,14 +277,12 @@ Attack multiplier `_L 0x200AD964 …` → absolute **`0x088AD964`** (u32 code wr
   those addresses were previously blank for MHF1 in this table.
 - File replacement uses `FDXDAT/NATIVEPSP/<DISC>/<fileid>` — same convention as #17.
 
-## 7. Cross-validation log (all of this project's contribution)
-
+## 12. Cross-validation log (all of this project's contribution)
 - `0x09DA9860` (hpbar monster list) == `0x08800000 + 0x15A9860` (orig table) ✅
 - Monster HP `+0x246`, MaxHP `+0x288` (hpbar) == orig MHP3RD table ✅
 - sceIo import table (load/item agree) ✅
 
-## 8. TODO
-
+## 13. TODO
 - Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
 - Quest info region (name/time/rewards)
 - Player stats (attack/defense/skills)
