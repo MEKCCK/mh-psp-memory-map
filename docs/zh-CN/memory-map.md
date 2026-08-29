@@ -16,9 +16,6 @@
 | **[transmog]** | James-028/[mhfu_transmog](https://github.com/James-028/mhfu_transmog) `FINDINGS.md` | MHFU 静态数据表 |
 | **[transmog3]** | Exceen/[mhp3rd_transmog](https://github.com/Exceen/mhp3rd_transmog) `build_data.py` | MHP3RD 装备/武器表（ULJM05800） |
 | **[re]** | SiD3W4y/[mhfu-re](https://github.com/SiD3W4y/mhfu-re) `doc/*.txt` | MHFU 运行时结构/函数/OVL |
-| **[cheats]** | 9r3i/[mhp3-cheats](https://github.com/9r3i/mhp3-cheats) | MHP3/MHFU cheat 码、护石技能表 |
-| **[mhef]** | svanheulen/[mhef](https://github.com/svanheulen/mhef) `mhef/psp.py` | PSP MH 存档加密 |
-| **[fuc]** | FUComplete/[FUCTool](https://github.com/FUComplete/FUCTool) / [Patch](https://github.com/FUComplete/Patch) | MHFU 文件替换＋配置打补丁 |
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 补丁（事件加载槽等） |
 | **[val]** | 本项目（MEKCCK/ppsspp 内置 overlay） | 仅做**交叉验证/集成**，不产生新地址 |
 
@@ -30,7 +27,6 @@
 ---
 
 ## 0. 地址性质与偏移说明（重要）
-
 - 本表全部为 **PSP 虚拟地址**。PSP 内存映射由硬件/系统固定（用户 RAM 基址
   `0x08800000`），**实体机与 PPSSPP 一致** —— mhp3reload 等 mod 的 MIPS 补丁
   就是在真机上用这些地址打进去的。
@@ -118,7 +114,6 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 > 加基址；同版本游戏真机/模拟器地址永远相同。**
 
 ## 1. 怪物数据（全部游戏）
-
 > 以下四个游戏的表全部来自 **[orig]**（Alexander-Lancellott 的 Python 原版 overlay）。
 > 用法：`列表指针 = 0x08800000 + initial` → 怪物列表 `指针[i](4字节)`，非零即现存怪物；
 > 结构偏移 = 怪物结构体指针 + 下表偏移。名称字节 → 怪表见各游戏 `monsters_*.py`
@@ -151,7 +146,6 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 > 列表指针 `0x09DA9860 == 0x08800000 + 0x15A9860` ✅、HP `+0x246`、最大HP `+0x288` ✅
 
 ## 2. P3 专属扩展：任务 / 游戏状态（仅 P3 有公开数据；其余版本对应区待挖）
-
 | 含义 | ULJM05800（原版/NOHD） | NPJB40001（HD） | 来源 |
 |---|---|---|---|
 | 任务状态（in-quest 标志，0x656D6167 魔数附近） | `0x09C57CA0` | `0x0A05E620` | **[hpbar]**(仅原版) **[dmg]** |
@@ -159,7 +153,6 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 | 加载画面标志 | `0x08AB49EC` | 未提供 | **[hpbar]** |
 
 ## 3. P3 专属扩展：玩家数据（仅 P3）
-
 | 含义 | ULJM05800（原版/NOHD） | NPJB40001（HD） | 来源 |
 |---|---|---|---|
 | player_area（玩家状态区） | `0x08B24979` | `0x08B2B139` | **[dmg]** |
@@ -169,7 +162,6 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 | 精灵/纹理显示信息 | `0x08B268DC` | `0x08B2D09C` | **[sharp]** |
 
 ## 4. P3 专属扩展：物品（仅 P3）
-
 | 含义 | ULJM05800（原版/NOHD） | NPJB40001（HD） | 来源 |
 |---|---|---|---|
 | 箱子 ITEM_BOX | `0x09B4C244` | `0x09F52CF4` | **[item]** |
@@ -180,7 +172,6 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 | 套装 hook | `0x09D48EE0` | `0x0A14AAE0` | **[item]** |
 
 ## 5. P3 专属扩展：渲染 / 相机（伤害飘字、小地图、自由视角用）
-
 | 含义 | ULJM05800（原版/NOHD） | NPJB40001（HD） | 来源 |
 |---|---|---|---|
 | ViewMatrix（视图矩阵，世界→屏幕投影） | `0x09B486B0` | `0x09F4F120` | **[dmg]** |
@@ -195,7 +186,6 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 > ViewMatrix + player_area 是之前"伤害数字"需求的两个关键锚点（都有原版/HD 两套）—— 想做随时能继续。
 
 ## 6. P3/HD 专属：文件系统 / 模组加载（loader 管线）
-
 | 名称 | P3 原版 | P3HD | 来源 |
 |---|---|---|---|
 | EBOOT_LOAD | `0x0880134C` | `0x0880134C` | **[load]** |
@@ -211,8 +201,7 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 
 ---
 
-## 9. MHFU 静态数据表 [transmog]（来源：mhfu_transmog 的 FINDINGS.md）
-
+## 7. MHFU 静态数据表 [transmog]（来源：mhfu_transmog 的 FINDINGS.md）
 > 基于 FUComplete 补丁 / 存档差分验证，CWCheat 示例确认映射关系。
 
 | 表 | 地址 | 备注 |
@@ -235,8 +224,7 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 `0x08A35890`（当前头部模型 file_id）、`0x0912F54C`。只可用于实时工具，
 **不能用于静态 CWCheat 代码**。
 
-## 10. MHP3RD 静态数据表 [transmog3]（ULJM05800，来自 build_data.py）
-
+## 8. MHP3RD 静态数据表 [transmog3]（ULJM05800，来自 build_data.py）
 ### 防具槽表
 
 | 槽 | 基址 | 条目数 | 玩家偏移 |
@@ -276,8 +264,7 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 | `0x08966184` | 按 type 字节索引的处理函数表 |
 
 
-## 11. [re] MHFU 运行时结构（SiD3W4y/mhfu-re `doc/objects.txt`）
-
+## 9. [re] MHFU 运行时结构（SiD3W4y/mhfu-re `doc/objects.txt`）
 | 结构 | 地址 / 偏移 | 字段 |
 |---|---|---|
 | 游戏态 | 指针 @ `0x09C122B0`（game_task.ovl 加载后） | 巨型全局；+0x1220 实体指针列表（0x14 个指针），+0x1270 实体数 u32 |
@@ -299,8 +286,7 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 金狮子 vtable `0x089BCD64`。实体类型 0..175 表 = MHFU 怪表（对照 [orig] `monsters_mhfu`）。
 箱子：指针 @ `0x089CC558`，物品数组 @ `+0x390`（u16 物品 id + s16 数量 对）。
 
-## 12. [re] MHFU 关键函数
-
+## 10. [re] MHFU 关键函数
 | 地址 | 函数 |
 |---|---|
 | `0x0884EA1C` | `decrypt_data(全局态, 数据, 大小)` |
@@ -308,54 +294,7 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 | `0x09AC8AF0` | 间接改怪物状态（vtable+0x88） |
 | `0x088D72A4` | `give_item(玩家态, u16 物品id, s16 数量)` |
 
-## 13. [re] OVL 格式与运行时段（`runtime.txt` / `ovl.txt`）
-
-- overlay 在 `psp_game/usrdir/data.bin`（加密档案；用 svanheulen/mhff 或 mhef 解包）。
-- `struct OVLFile`：magic `"MWo3"`、u32 load_base（== eboot 段 vaddr）、load_end、
-  name[0x60]、随后数据；**映射期间头部保留在内存**。
-- 运行时段列表：demo/edit/movie/install/arcade 等任务加载在 `0x09A5F300+`
-  （完整列表见 doc/runtime.txt）。
-
-## 14. [cheats] MHP3 护石技能组合表（节选）＋CWCheat 换算
-
-`mhp3.talisman.txt`（175 行）：双技能组合 id → 技能，例：
-`0001 = Torso Up`、`0101 = Torso Up / Poison`、`0202 = Poison / Sleep`、
-`0404 = Sleep / Health`、`0F0F = Guard / Bomb Boost`、`1010 = Guard Up / Gluttony`……
-完整表见 9r3i/mhp3-cheats。
-
-CWCheat → 绝对地址示例（`cheats.md` 内代码）：
-攻击倍率 `_L 0x200AD964 …` → 绝对地址 **`0x088AD964`**（u32 指令写，+`0x08800000`）。
-库内任何码都按此规则换算。
-
-## 15. [mhef] PSP 存档加密常量（`mhef/psp.py`）
-
-- MHP2G JP 盐 `b'S)R?Bf8xW3#5h9lGU8wR'`、NA `b'3Nc94Hq1zOLh8d62Sb69'`、
-  MHP3 JP `b'VQ(DOdIO9?X3!2GmW#XF'`；SHA-1(数据+盐)。
-- 各版本密钥：MHP `b'>\r\xb2\xef…'`、MHP2 `b'\xe3\xb5\xce…'`、
-  MHP2G `b'\xcd\x1f Y…'`、MHP3 `b"\xe3\x05\xce…"`（完整字节见原文件）。
-- 加密默认键 `(0x2345, 0x7f8d)`；MHP2G/MHP3 例外字节列表。
-- 用途：存档数据挖掘与校验（非运行时内存）。
-
-## 16. 附加数据源（交叉引用，无运行时地址）
-
-- Saramagrean/CWCheat-Database-Plus- —— 泰文 CWCheat 库，含 P3 已测名字编辑（PR #62）；偏移→绝对规则同上。
-- `mhfu.monweak.txt`（怪物弱点）、`mhfu.armor.skill.txt`（防具技能）、`cheats.md`
-  攻击码 —— 验证表语义的数据参考。
-- tclamb/mhp2g-decomp：WIP，暂无公开成果（见 TODO）。
-
-## 17. [fuc] MHFU 文件替换与配置打补丁（FUComplete/FUCTool）
-
-- **文件替换约定**：输入旁生成 `NATIVEPSP` 文件夹，文件放
-  `NATIVEPSP/<DISC_ID>/<文件id>`（如 `NATIVEPSP/ULES00318/5866`）—— 与
-  loader 的 `FILES/<hexid>` 同样按 id 命名（modman / FreedomDX 一致）。
-- **MHFU 文件表**：`res/filelist.csv`（约 195KB）映射文件 id → 路径
-  （如 `0000 → system/dummy`），解释替换 id 的最佳参考。
-- **CONFIG.BIN 选项补丁**：`res/config.json` 定义字节偏移与取值
-  （如 CONFIG.BIN 内偏移 `0x000F`、`0x005D`）—— 配置数据打补丁知识。
-- 模块：Patcher / Configuration / File Replacer / Custom Quests。
-
-## 18. [fdx] MHF1（FreedomDX）补丁 —— MHF1 首批具体地址
-
+## 11. [fdx] MHF1（FreedomDX）补丁 —— MHF1 首批具体地址
 | 功能/锚点 | 地址 | 版本 |
 |---|---|---|
 | EventLoader 槽（EN） | `0x095079E0` | MHF1 美版（ULES00318 系） |
@@ -365,14 +304,12 @@ CWCheat → 绝对地址示例（`cheats.md` 内代码）：
   Hold-to-Gather 等），`build.py` 统一组装 —— 这些地址补上了本表 MHF1 的空白。
 - 文件替换使用 `FDXDAT/NATIVEPSP/<DISC>/<文件id>`，约定同第 17 节。
 
-## 7. 交叉验证记录（[val] 本项目所做工作的全部内容）
-
+## 12. 交叉验证记录（[val] 本项目所做工作的全部内容）
 - `0x09DA9860`（hpbar 怪物列表指针）== 本项目 `0x08800000 + 0x15A9860` ✅
 - 怪物 HP 偏移 `+0x246`、最大 HP `+0x288`（hpbar）== 本项目 MHP3RD 表 ✅
 - sceIo 导入表地址（load/item 两处仓库一致）✅
 
-## 8. 待挖（TODO）
-
+## 13. 待挖（TODO）
 - 怪物坐标 x/y/z（结构体内/附近）—— P3 可从 `+0xD4` 附近/ViewMatrix 锚点入手
 - 任务信息区（任务名/时限/报酬）
 - 玩家属性（攻防/技能）
