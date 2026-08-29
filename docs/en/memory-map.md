@@ -287,7 +287,7 @@ table (see [orig] `monsters_mhfu`). Item box: ptr @ `0x089CC558`, item array at
 | Pouch slot 1 | `0x017AF7FE` | `0x09FAF7FE` | 4B: hi u16 = count, lo u16 = item id |
 | Item box slot 1 | `0x01752CF4` | `0x09F52CF4` | 4B, same layout as pouch |
 | Equipment box slot 1 | `0x0174FE14` | `0x09F4FE14` | 12B |
-| Hunter name | `0x0174FCAC` | `0x09F4FCAC` | 24B |
+| Hunter name | `0x0174FCAC` | `0x09F4FCAC` | 24B, **UTF-16LE**, first char = low u16 at base |
 
 > Cross-verified: pouch/box absolute addresses == [item] HD table (`0x09FAF7FE` / `0x09F52CF4`) ✓
 
