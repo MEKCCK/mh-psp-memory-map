@@ -18,6 +18,7 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[re]** | SiD3W4y/[mhfu-re](https://github.com/SiD3W4y/mhfu-re) `doc/*.txt` | MHFU runtime structures/functions/OVL |
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 patches (event loader slots etc.) |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
+| **[us]** | MEKCCK (repo maintainer), measured on device/emulator | P3HD verified values |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
 > original authors' **public projects** listed above. The PPSSPP in-emulator overlay
@@ -277,12 +278,26 @@ table (see [orig] `monsters_mhfu`). Item box: ptr @ `0x089CC558`, item array at
   those addresses were previously blank for MHF1 in this table.
 - File replacement uses `FDXDAT/NATIVEPSP/<DISC>/<fileid>` — same convention as #17.
 
-## 12. Cross-validation log (all of this project's contribution)
+## 12. P3HD (NPJB40001) player & items [us]  (offset style: absolute = offset + 0x08800000)
+
+| Field | Offset | Absolute | Size / layout |
+|---|---|---|---|
+| Quest-instance entry detect | `0x00015FA8` | `0x08815FA8` | task value `0x0185E610` written on entering a quest |
+| Psychic (千里眼) cooldown | `0x00E4A496` | `0x0964A496` | u16 |
+| Pouch slot 1 | `0x017AF7FE` | `0x09FAF7FE` | 4B: hi u16 = count, lo u16 = item id |
+| Item box slot 1 | `0x01752CF4` | `0x09F52CF4` | 4B, same layout as pouch |
+| Equipment box slot 1 | `0x0174FE14` | `0x09F4FE14` | 12B |
+| Hunter name | `0x0174FCAC` | `0x09F4FCAC` | 24B |
+
+> Cross-verified: pouch/box absolute addresses == [item] HD table (`0x09FAF7FE` / `0x09F52CF4`) ✓
+
+
+## 13. Cross-validation log (all of this project's contribution)
 - `0x09DA9860` (hpbar monster list) == `0x08800000 + 0x15A9860` (orig table) ✅
 - Monster HP `+0x246`, MaxHP `+0x288` (hpbar) == orig MHP3RD table ✅
 - sceIo import table (load/item agree) ✅
 
-## 13. TODO
+## 14. TODO
 - Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
 - Quest info region (name/time/rewards)
 - Player stats (attack/defense/skills)
