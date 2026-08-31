@@ -390,7 +390,54 @@ part-resist=1 (1st/2nd monster at +0x4), +0x280 at `0x08B24A64` = corpse-despawn
 | Death-no-reward-cut | 0x13AC054 | 0x09BAC054 | u32 zero |
 
 
-## 17. Cross-validation log (all of this project's contribution)
+## 17. P3HD (NPJB40001) address extrapolation (delta method, from [us]/[item]/[sharp]/[dmg] anchors)
+
+**Method**: HD uses a relocated EBOOT; addresses shift per region. Using verified
+orig↔HD pairs, each HD address is predicted as `HD = orig + delta(region)`.
+
+### Verified anchor deltas (orig → HD)
+
+| Region | delta |
+|---|---|
+| data region (box/pouch/weapon/viewmatrix/task/check…) | **+0x406AB0** (spread 0x403C68–0x406D00) |
+| monster list | +0x507280 |
+| player runtime (0x08B2xxxx) | +0x67C0 |
+| code 0x088Exxxx | +0x1AB8 |
+| sharpness/data 0x0897xxxx | +0x5938 |
+
+### Predicted HD addresses (nearest verified anchor)
+
+| Field (P3 orig) | Orig addr | Predicted HD | Anchor |
+|---|---|---|---|
+| Item box slot 1 | 0x09B4C244 | **0x09F52CF4** (verified) | item box |
+| 99-pouch region | 0x09BA8D4C | 0x09FAF800 (≈ measured 0x09FAF7FE ✓) | pouch1 |
+| Play time | 0x09B4DA94 | 0x09F54544 | pouch2 |
+| Village hunts | 0x09BA1820 | 0x09FA82D4 | pouch1 |
+| Guild-hall high | 0x09BA1824 | 0x09FA82D8 | pouch1 |
+| Weapon-use GS | 0x09BA1C10 | 0x09FA86C4 | pouch1 |
+| Medals | 0x09BA1894 | 0x09FA8348 | pouch1 |
+| Card bg color | 0x09BA188B | 0x09FA833F | pouch1 |
+| Record clear | 0x09BA3A30 | 0x09FAA4E4 | pouch1 |
+| Cat level | 0x09BA648F | 0x09FACF43 (≈ measured slot 0x09FACF44 ✓) | pouch1 |
+| Cat skills | 0x09BA64F4 | 0x09FACFA8 | pouch1 |
+| Cat owner name | 0x09BA656C | 0x09FAD020 | pouch1 |
+| Cat drink skills | 0x09BA5E40 | 0x09FAC8F4 | pouch1 |
+| Quest time | 0x09B3C568 | 0x09F42FD8 | view matrix |
+| No-5min-flag | 0x09BAE1D8 | 0x09FB4C8C | pouch1 |
+| Death-no-cut | 0x09BAC054 | 0x09FB2B08 | pouch1 |
+| Part-resist base | 0x08B24A10 | 0x08B2B1D0 (low) | player_area |
+| Zone teleport | 0x08B24978 | 0x08B2B138 (low) | player_area |
+
+**Self-validation**: cat-level prediction 0x09FACF43 ≈ measured HD felyne slot
+0x09FACF44 (off by 1 B); 99-pouch prediction ≈ measured pouch1 ±2 B. Both confirm
+the +0x406ABx cluster.
+
+> ⚠️ Predictions are for **prioritized testing only** — verify per digging-guide,
+> then promote to a verified row. HD splits regions differently (loads of NPJB40001
+> differ); outside these clusters the delta method is unreliable.
+
+
+## 18. Cross-validation log (all of this project's contribution)
 - `0x09DA9860` (hpbar monster list) == `0x08800000 + 0x15A9860` (orig table) ✅
 - Monster HP `+0x246`, MaxHP `+0x288` (hpbar) == orig MHP3RD table ✅
 - sceIo import table (load/item agree) ✅
@@ -399,7 +446,7 @@ part-resist=1 (1st/2nd monster at +0x4), +0x280 at `0x08B24A64` = corpse-despawn
 - [cwps] item box `0x09B4C244` == [item] original ✅
 - [cwps] Felyne slot stride +0xA0 == [us] P3HD ✅
 
-## 18. TODO
+## 19. TODO
 - Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
 - Quest info region (name/time/rewards)
 - Player stats (attack/defense/skills)
