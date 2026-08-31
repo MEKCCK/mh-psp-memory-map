@@ -4,6 +4,9 @@
 
 ## 来源标注（Source Tags）
 
+> 本表是**内存地址参考表**；金手指/作弊码数据库只是**发现与验证手段**
+>（见挖掘指南），条目以「内存地址」视角收录，而非以代码形式收录。
+
 | 标记 | 来源 | 说明 |
 |---|---|---|
 | **[orig]** | Alexander-Lancellott/**MH-HP-Overlay-For-PSP-Emulator**（Python 原版 overlay 项目） | 指针表与结构偏移的真正来源；本项目仅移植/集成，无原创 |
@@ -19,8 +22,8 @@
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 补丁（事件加载槽等） |
 | **[val]** | 本项目（MEKCCK/ppsspp 内置 overlay） | 仅做**交叉验证/集成**，不产生新地址 |
 | **[us]** | MEKCCK（本仓库维护者）实机/模拟器实测 | P3HD 核验值 |
-| **[cwps]** | 社区 CWCheat 集（用户归档） | P3 普通版（ULJM05800）核验值 |
-| **[cw]** | 社区 CWCheat（用户归档） | MHF1（ULJM05066）核验值 |
+| **[cwps]** | 社区 CWCheat（用户归档）—— 仅作**验证来源** | P3 普通版（ULJM05800）数值 |
+| **[cw]** | 社区 CWCheat（用户归档）—— 仅作**验证来源** | MHF1（ULJM05066）数值 |
 
 > 声明：本表所有内存知识均来自上述两个原作者的**公开项目**，本项目（PPSSPP 内置
 > overlay）只是把这些已公开的数据**移植进模拟器并交叉核对**，没有一条地址是本项目
@@ -421,7 +424,7 @@ PSP 的 CPU（Allegrex，MIPS R4000 系）虚拟地址空间是硬件定死的�
 | 阵亡不减报酬 | 0x13AC054 | 0x09BAC054 | u32 清零 |
 
 
-## 17. [cw] P3HD（NPJB40001）：社区金手指详表
+## 17. [cw] P3HD（NPJB40001）：玩家/道具/怪物/任务数据区（经社区码推导并验证）
 
 > 怪物结构偏移 HD == P3 原版（[orig]）：+0x246 HP、+0x288 最大HP、+0x23C/0x252 毒、+0x24E/0x24C 眠、+0x25A/0x258 麻、+0xC5C/0xC5E 晕、+0xBC2/+0xBC0 体力、+0xD4 尺寸（HP 显示代码逐字段直读）—— 互证 ✓✓
 > 猫槽：名字 0x09FACF44，槽距 +0xA0（共 5 只）✓
