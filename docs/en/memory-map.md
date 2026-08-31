@@ -4,6 +4,10 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 
 ## Source Tags
 
+> This is a **memory reference table**. Cheat/cheat-code databases are only a
+> *discovery & verification* source (see digging-guide); entries are recorded as
+> memory addresses, not as codes.
+
 | Tag | Source |
 |---|---|
 | **[orig]** | Alexander-Lancellott / **[MH-HP-Overlay-For-PSP-Emulator](https://github.com/Alexander-Lancellott/MH-HP-Overlay-For-PSP-Emulator)** (Python) — the real origin of the monster pointer tables & offsets; this project only ported/integrated them |
@@ -19,8 +23,8 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 patches (event loader slots etc.) |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 | **[us]** | MEKCCK (repo maintainer), measured on device/emulator | P3HD verified values |
-| **[cwps]** | community CWCheat collection (user archived) | P3 original (ULJM05800) verified values |
-| **[cw]** | community CWCheat (user archived) | MHF1 (ULJM05066) values |
+| **[cwps]** | community CWCheat (user archived) — used as a *verification source* | P3 original (ULJM05800) values |
+| **[cw]** | community CWCheat (user archived) — *verification source* | MHF1 (ULJM05066) values |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
 > original authors' **public projects** listed above. The PPSSPP in-emulator overlay
@@ -392,7 +396,7 @@ part-resist=1 (1st/2nd monster at +0x4), +0x280 at `0x08B24A64` = corpse-despawn
 | Death-no-reward-cut | 0x13AC054 | 0x09BAC054 | u32 zero |
 
 
-## 17. [cw] P3HD (NPJB40001): community cheat detail
+## 17. [cw] P3HD (NPJB40001): player / item / monster / quest data areas (derived & verified via community codes)
 
 > Monster struct offsets HD == P3 orig ([orig]): +0x246 HP, +0x288 maxHP, +0x23C/0x252 poison, +0x24E/0x24C sleep, +0x25A/0x258 para, +0xC5C/0xC5E dizzy, +0xBC2/+0xBC0 stamina, +0xD4 size (read directly by the HP-display cheat) — cross-verified ✓✓
 > Felyne slots: name 0x09FACF44, stride +0xA0 (5 cats) ✓
