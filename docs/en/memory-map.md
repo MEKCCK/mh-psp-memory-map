@@ -282,6 +282,23 @@ part-resist=1 (1st/2nd monster at +0x4), +0x280 at `0x08B24A64` = corpse-despawn
 | Death-no-reward-cut | 0x13AC054 | 0x09BAC054 | u32 zero |
 
 
+### 4.10 显血 / 伤害数字 / 换装（普通版 ULJM05800，经社区码验证）[cw]
+
+| 区域/字段 | 地址 | 备注 |
+|---|---|---|
+| 显血显示代码区 | `0x08801000` | 主码 4/4（普通版） |
+| 显血暂存区 | `0x08801FF0`–`0x08801FFC` | 6×u32 |
+| 显血 HUD 文本/颜色 | `0x08800FFA` | |
+| 显血开启条件读取 | `0x09BB7A64` | == [item] CONTROL_HOLD ✓ |
+| **猫数据指针区** | **`0x09BF9F18`** | 猫显血用；猫结构偏移与怪物相同（+0x62/+0x246/+0x288/+0xD4/+0xBC0/+0xBC2/状态/耐性 8 组） |
+| 无猫显血 hook | `0x088E30D8` | |
+| 伤害数字 hook | **`0x088E6D64`** | == [dmg] P3 原版 MAIN_HOOK ✓ |
+| 伤害数字代码区 | `0x09F00400` | |
+| 伤害数字取玩家区 | `0x08B24979` | == [dmg] ✓ |
+| 集会所换装-装备槽区 | `0x09B458F4`–`0x09B45CD8` | 五组；另 0x09B48204、0x09E5E1AC、0x09EEAB50 |
+
+> 普通版与 HD 版的显血/DMG 结构偏移一致（怪物结构同构），可互为对照。
+
 ## 5. MHP3RD HD NPJB40001
 ### Player / items (measured) [us]
 
@@ -454,6 +471,7 @@ the +0x406ABx cluster.
 - HP-display main code reads HD monster offsets == [orig] full map ✓✓
 - DMG hook 0x088E881C == [dmg] HD MAIN_HOOK; cave 0x0AFF0000 == [dmg] LOAD_ADD ✓
 - Monster list 0x0A1B0AE0 third confirmation (DMG/target-cam codes) ✓
+- P3 original DMG hook 0x088E6D64 == [dmg]; cat-data ptr 0x09BF9F18 (orig); HP-display offsets == [orig] on original too ✓
 
 ## 8. TODO
 - Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
