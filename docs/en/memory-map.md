@@ -316,6 +316,7 @@ table (see [orig] `monsters_mhfu`). Item box: ptr @ `0x089CC558`, item array at
 | Guild card text | `0x017A8280` | `0x09FA8280` | UTF-16LE text (3×u32 write sample) |
 | Felyne slot 1 | `0x017ACF44` | `0x09FACF44` | first u32 = name (2×u16 LE); slot stride +0xA0 |
 | Felyne slot 2 | `0x017ACFE4` | `0x09FACFE4` | same layout, +0xA0 from slot 1 |
+| Money (candidate) | `0x17AC8D4` | `0x09FAC8D4` | u32, 9,999,999 = 0x0098967F — code `0x2…` = 32-bit write; awaits verification |
 
 > Cross-verified: pouch/box absolute addresses == [item] HD table (`0x09FAF7FE` / `0x09F52CF4`) ✓
 > CWCheat codes (`0x2174FCAC`) independently confirm hunter-name base (`0x09FAF7FE` / `0x09F52CF4`) ✓
