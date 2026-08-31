@@ -20,6 +20,7 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 | **[us]** | MEKCCK (repo maintainer), measured on device/emulator | P3HD verified values |
 | **[cwps]** | community CWCheat collection (user archived) | P3 original (ULJM05800) verified values |
+| **[cw]** | community CWCheat (user archived) | MHF1 (ULJM05066) values |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
 > original authors' **public projects** listed above. The PPSSPP in-emulator overlay
@@ -437,7 +438,21 @@ the +0x406ABx cluster.
 > differ); outside these clusters the delta method is unreliable.
 
 
-## 18. Cross-validation log (all of this project's contribution)
+## 18. [cw] MHF1 (ULJM05066): player / guild card text
+
+Character-set note: MHF1 name/guild-card text is **UTF-16BE** (2 bytes/char,
+high byte first) — different from P3/P3HD (LE). 8 chars max for names; past that
+the fields bleed into other data (unstable later in game).
+
+| Field | Offset | Absolute | Size / layout |
+|---|---|---|---|
+| Character name | 0x10532C4 | 0x098532C4 | 8 chars = 16 B, UTF-16BE, 2 chars per u32 (hi first) |
+| Guild-card name | 0x1057620 | 0x09857620 | 8 chars = 16 B, same encoding |
+| Guild-card self intro | 0x105764C | 0x0985764C | 96 chars = 192 B; every 2 chars = +4 B (continues line-by-line) |
+| Title cursor lock | 0x113A7C0 | 0x0993A7C0 | u8: fixed title-cursor slot |
+
+
+## 19. Cross-validation log (all of this project's contribution)
 - `0x09DA9860` (hpbar monster list) == `0x08800000 + 0x15A9860` (orig table) ✅
 - Monster HP `+0x246`, MaxHP `+0x288` (hpbar) == orig MHP3RD table ✅
 - sceIo import table (load/item agree) ✅
@@ -446,7 +461,7 @@ the +0x406ABx cluster.
 - [cwps] item box `0x09B4C244` == [item] original ✅
 - [cwps] Felyne slot stride +0xA0 == [us] P3HD ✅
 
-## 19. TODO
+## 20. TODO
 - Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
 - Quest info region (name/time/rewards)
 - Player stats (attack/defense/skills)
