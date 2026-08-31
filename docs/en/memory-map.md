@@ -19,6 +19,7 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 patches (event loader slots etc.) |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 | **[us]** | MEKCCK (repo maintainer), measured on device/emulator | P3HD verified values |
+| **[cwps]** | community CWCheat collection (user archived) | P3 original (ULJM05800) verified values |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
 > original authors' **public projects** listed above. The PPSSPP in-emulator overlay
@@ -319,12 +320,86 @@ table (see [orig] `monsters_mhfu`). Item box: ptr @ `0x089CC558`, item array at
 > CWCheat codes (`0x2174FCAC`) independently confirm hunter-name base (`0x09FAF7FE` / `0x09F52CF4`) ✓
 
 
-## 13. Cross-validation log (all of this project's contribution)
+## 13. [cwps] P3 original (ULJM05800): player / box / guild card
+
+| Field | Offset | Absolute | Note |
+|---|---|---|---|
+| Player HP (current/green) | 0x0D41556 | 0x09541556 | in-task u8/u16 |
+| Player HP (recover/red) | 0x0D41596 | 0x09541596 | in-task |
+| Player HP max | 0x0D41598 | 0x09541598 | in-task |
+| Player action region | 0x0D4149C | 0x0954149C | used by button-codes |
+| Move speed (f32) | 0x0D41FC4 | 0x09541FC4 | +0x40 per extra ×1 |
+| Item box slot 1 | 0x134C244 | **0x09B4C244** | u32 id@+0 count@+2 — == [item] original ✓ |
+| Item pouch ∞ region | 0x1CAFA2 | 0x089CAFA2 | codes "Item Infinity" |
+| Item pouch 99 region | 0x13A8D4C | 0x09BA8D4C | codes "Item Infinity99" |
+| Armor slots 3-hole region | 0x117E036 | 0x09A7E036 | code "Equip Slot 3" |
+| Weapon slots 3-hole region | 0x118D602 | 0x09A8D602 | |
+| Melee element region | 0x118D5FE | 0x09A8D5FE | fire/water/thunder/dragon/ice/status |
+| Play time (s, u32) | 0x134DA94 | 0x09B4DA94 | guild card |
+| Guild pts / affinity | 0x13A182C | 0x09BA182C | |
+| Village hunts | 0x13A1820 | 0x09BA1820 | u16 |
+| Guild-hall low/high | 0x13A1822 / 0x13A1824 | 0x09BA1822 / 0x09BA1824 | |
+| Training arena / bath | 0x13A1826 / 0x13A1828 | 0x09BA1826 / 0x09BA1828 | |
+| Weapon-use counts (GS) | 0x13A1C10 | 0x09BA1C10 | see list below |
+| Medals | 0x13A1894 | 0x09BA1894 | bitfield |
+| Card bg color | 0x13A188B | 0x09BA188B | 0–4 |
+| Record clear region | 0x13A3A30 | 0x09BA3A30 | |
+
+Weapon-use count offsets from table base 0x09BA1C10: GS +0, DB +2, Hammer +4, Lance +6,
+HBG +8, LBG +0xC, LS +0xE, SA +0x10, Gunlance +0x12, Bow +0x14, SnS +0x16, HH +0x18.
+
+## 14. [cwps] P3 original: Felyne (cat) data — slot 1 base 0x09BA648F region
+
+| Field | Offset | Absolute | Note |
+|---|---|---|---|
+| Cat level | 0x13A648F | 0x09BA648F | u8, max 20 |
+| Bond (亲密度) | 0x13A6493 | 0x09BA6493 | max 30 |
+| Attack mode | 0x13A64E8 | 0x09BA64E8 | 0–5 |
+| Attack tendency | 0x13A64E9 | 0x09BA64E9 | 0–4 |
+| Personality | 0x13A64EA | 0x09BA64EA | 0–6 |
+| Color | 0x13A64EB | 0x09BA64EB | 0–0x21 |
+| Sortie count | 0x13A64E6 | 0x09BA64E6 | u16 |
+| ATK / DEF | 0x13A6527 / 0x13A6528 | 0x09BA6527 / 0x09BA6528 | u8 |
+| Skills (3 slots u32×2) | 0x13A64F4 | 0x09BA64F4 | 2×(u32) |
+| Waterfall skill | 0x13A6525 | 0x09BA6525 | 0–5 |
+| Owner name | 0x13A656C | 0x09BA656C | u16 |
+| Cat 2 waterfall/owner | 0x13A65C5 / 0x13A660C | 0x09BA65C5 / 0x09BA660C | **stride +0xA0 (== [us] HD ✓)** |
+| Drink (猫饭) skills | 0x13A5E40 | 0x09BA5E40 | 5×u16+u8 |
+
+## 15. [cwps] P3 original: monster runtime fields (base list ptr 0x09DA9860)
+
+| Offset | Field | Source code |
+|---|---|---|
+| +0x62 | monster type u8 (== [orig]/[transmog3] ✓) | "062 モンスター種類" |
+| +0x18C | motion value u16 | motion codes |
+| +0xBCA | rage flag u8 (00/01) | "BCA 怒り判定" |
+| +0xBC2 | stamina/Hp-zero field | "怪物体力为0" |
+| +0x258 | paralysis apply | "[L+R+X]怪麻痺" |
+
+Body-part resistance base `0x08B24A10` (code semantics, unverified): +0xB32/+0xB34
+part-resist=1 (1st/2nd monster at +0x4), +0x280 at `0x08B24A64` = corpse-despawn fast
+(large continuous quests).
+
+## 16. [cwps] P3 original: quest / maps
+
+| Field | Offset | Absolute | Note |
+|---|---|---|---|
+| Quest time left | 0x133C568 | 0x09B3C568 | u32, frames (30 = 1 s); e.g. 60min=0x1A5E0 |
+| Zone/map teleport | 0x324978 | 0x08B24978 | packed (map/zone byte); near player_area |
+| "No 5-min-clear" flag | 0x13AE1D8 | 0x09BAE1D8 | u32 |
+| Death-no-reward-cut | 0x13AC054 | 0x09BAC054 | u32 zero |
+
+
+## 17. Cross-validation log (all of this project's contribution)
 - `0x09DA9860` (hpbar monster list) == `0x08800000 + 0x15A9860` (orig table) ✅
 - Monster HP `+0x246`, MaxHP `+0x288` (hpbar) == orig MHP3RD table ✅
 - sceIo import table (load/item agree) ✅
+- [cwps] monster list ptr `0x09DA9860` == [orig]+[hpbar] (third source) ✅
+- [cwps] monster type offset `+0x62` == [orig]/[transmog3] ✅
+- [cwps] item box `0x09B4C244` == [item] original ✅
+- [cwps] Felyne slot stride +0xA0 == [us] P3HD ✅
 
-## 14. TODO
+## 18. TODO
 - Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
 - Quest info region (name/time/rewards)
 - Player stats (attack/defense/skills)
