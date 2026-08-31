@@ -17,12 +17,17 @@
 所有平台共用同一份 UI 层代码（`UI/MHOverlay.*` + 枚举/菜单/CMake），无平台分支。
 桌面端文字渲染走各自平台的 FreeType/CoreText，中文友好。
 
-## 2. 关于"显血"的 3DS 来源
+## 2. 关于"显血"的 3DS 来源（原项目已确认）
 
-- 作者另有 **MH-HP-Overlay-For-3DS-Emulator**（3DS/Citra 版 overlay），部分显血
-  数据与方法与 PSP 版同源/可互证（怪物结构、部位破坏、异常状态等心智模型一致）。
-- 计划：把 3DS 版的已知数据整理进本内存表体系（3DS 为架构映射，新增一章
-  `docs/3ds/`），并标注与 PSP 结构的异同，供交叉验证。
+- **原项目 = Alexander-Lancellott 的 MH-HP-Overlay 双版本**：
+  PSP 版（已用）+ **3DS 版 `MH-HP-Overlay-For-3DS-Emulator`**（支持 MH3G/3U、MH4/U/G、MHX/GEN/XX）。
+- 3DS 版读取方式（`modules/citra.py`）：**Citra 自带 UDP 调试口 `127.0.0.1:45987`**
+  （RequestType: ReadMemory/WriteMemory/ProcessList/SetGetProcess）——原生脚本/调试协议，
+  与 PSP 侧 WS 调试口同构，**集成路径与 PPSSPP 一致**。
+- 3DS 指针表（`modules/mh3u_mh3g.py / mh4u_mh4g.py / mhxx.py` + `monsters_*.py` 怪表）：
+  基址示例 MHXX `0xDD2360 / 0xDA2360 / 0xDB9360`，接口指针链 + 偏移随代际参数化（如
+  `+0xFAC / +0x10A8`、`+0x360`、大小 `+0x154/+0x18C` 秒、耐性阈值等）。
+- 计划：把 3DS 版数据整理进 `docs/3ds/`（怪表 + 各代指针链 + 基址参数），与 PSP 结构互证。
 
 ## 3. 统一前端（封装 PPSSPP + 3DS 模拟器）
 
@@ -31,9 +36,11 @@
 - 3DS 模拟器（如 Citra），同样接入 overlay 数据层
 
 阶段规划：
-1. **P0 资料层**：完成 PSP 内存表（本仓库）；补 3DS 内存表（`docs/3ds/`）
+1. **P0 资料层**：完成 PSP 内存表（本仓库）；补 3DS 内存表（`docs/3ds/`，数据源
+   = 3DS overlay 项目的 citra.py + mh3u/mh4u/mhxx 指针链）
 2. **P1 模拟器层**：PPSSPP 全平台发布稳定（§1）；
-   Citra 魔改分支建立（overlay 集成，参照 ppsspp 分支做法）
+   **3DS 模拟器选型 + 魔改分支**（Citra 系：Citra/Lime3DS 等；overlay 原生集成，
+   读取可走其 UDP 45987 口或直接内置——同 PPSSPP 分支做法）
 3. **P2 前端层**：
    - 桌面：统一起动器（选模拟器 → 自动带 overlay；共享存档/设置入口）
    - 移动端：单 App 壳内嵌两个模拟器视图（后续评估体积/兼容）
