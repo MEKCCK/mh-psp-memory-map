@@ -444,6 +444,34 @@ part-resist=1 (1st/2nd monster at +0x4), +0x280 at `0x08B24A64` = corpse-despawn
 | Bow attr region | 0x018EB74 | 0x898eb74 |  |
 | Equip skill +32 | 0x017D9BF | 0x897d9bf |  |
 
+### P3HD monster struct field map (from the HP-display main code, struct-relative)
+
+| Offset | Field | Read | Note |
+|---|---|---|---|
+| +0x62 | type (monster id) | lb | == [orig] ✓ |
+| +0x246 | current HP | lhu | == [orig] ✓ |
+| +0x288 | max HP | lhu | == [orig] ✓ |
+| +0xD4 | size (f32) | qe | == [orig] ✓ |
+| +0xBC0 / +0xBC2 | stamina / fatigue | lhu/lhu | new |
+| +0x23C / +0x252 | poison cur/max | lhu | == [orig] ✓ |
+| +0x24E / +0x24C | sleep cur/max | lhu | ✓ |
+| +0x25A / +0x258 | para cur/max | lhu | ✓ |
+| +0xC5C / +0xC5E | dizzy cur/max | lhu | ✓ |
+| +0xB32..+0xB6C | part-resistance pairs (8 zones) | lhu/lhu | +0xB32/B34, B3A/B3C, B42/B44, B4A/B4C, B52/B54, B5A/B5C, B62/B64, B6A/B6C |
+
+Drawn via a staging area at `0x08801FF0`–`0x08801FFC` (6 u32) and a HUD
+text/color region at `0x08800FFA`; the display code itself lives at `0x08801000`.
+
+### DMG numbers / target camera (code areas, cross-checks)
+
+| Item | Absolute | Note |
+|---|---|---|
+| DMG hook (write at 0x200E881C) | **0x088E881C** | == [dmg] HD MAIN_HOOK ✓ |
+| DMG code cave (0x227F0000) | **0x0AFF0000** | == [dmg] HD LOAD_ADD ✓ |
+| Monster list used by DMG code | **0x0A1B0AE0** | third confirmation ✓ |
+| Target-camera code cave (0x22900000) | 0x0B100000 | extended RAM; reads monster list |
+| Drink skill slot 9/10 | 0x0964A4EE / 0x09F32EDE (task/non-task) | +1 = slot 10 |
+
 ## 18. P3HD (NPJB40001) address extrapolation (delta method, from [us]/[item]/[sharp]/[dmg] anchors)
 
 **Method**: HD uses a relocated EBOOT; addresses shift per region. Using verified
@@ -513,6 +541,9 @@ the fields bleed into other data (unstable later in game).
 - [cwps] monster type offset `+0x62` == [orig]/[transmog3] ✅
 - [cwps] item box `0x09B4C244` == [item] original ✅
 - [cwps] Felyne slot stride +0xA0 == [us] P3HD ✅
+- HP-display main code reads HD monster offsets == [orig] full map ✓✓
+- DMG hook 0x088E881C == [dmg] HD MAIN_HOOK; cave 0x0AFF0000 == [dmg] LOAD_ADD ✓
+- Monster list 0x0A1B0AE0 third confirmation (DMG/target-cam codes) ✓
 
 ## 21. TODO
 - Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
