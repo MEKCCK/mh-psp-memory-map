@@ -392,7 +392,59 @@ part-resist=1 (1st/2nd monster at +0x4), +0x280 at `0x08B24A64` = corpse-despawn
 | Death-no-reward-cut | 0x13AC054 | 0x09BAC054 | u32 zero |
 
 
-## 17. P3HD (NPJB40001) address extrapolation (delta method, from [us]/[item]/[sharp]/[dmg] anchors)
+## 17. [cw] P3HD (NPJB40001): community cheat detail
+
+> Monster struct offsets HD == P3 orig ([orig]): +0x246 HP, +0x288 maxHP, +0x23C/0x252 poison, +0x24E/0x24C sleep, +0x25A/0x258 para, +0xC5C/0xC5E dizzy, +0xBC2/+0xBC0 stamina, +0xD4 size (read directly by the HP-display cheat) — cross-verified ✓✓
+> Felyne slots: name 0x09FACF44, stride +0xA0 (5 cats) ✓
+
+| Field | Offset | Absolute | Note |
+|---|---|---|---|
+| Farm/Yukumo pts | 0x17AC8CC | 0x9fac8cc | u32, max 9999999 |
+| Guild points | 0x17AC8D0 | 0x9fac8d0 | u32 (contiguous) |
+| Money | 0x17AC8D4 | 0x9fac8d4 | u32 (9999999=0x98967F) — verified by code ✓ |
+| Box slot 1 | 0x1752CF4 | 0x9f52cf4 | id@+0 (0xCE=bitterbug), count@+2 — == [us]/[item] ✓ |
+| Box slot1 count | 0x1752CF6 | 0x9f52cf6 | u16 |
+| Pouch slot 1 | 0x17AF800 | 0x9faf800 | = [us] pouch1 0x09FAF7FE count field (+2) ✓ |
+| Pouch slot 2 | 0x17AF804 | 0x9faf804 | +4 |
+| Mix list unlock | 0x1754548 | 0x9f54548 | u32 bitflags ×4+ |
+| Monster list unlock | 0x1754588 | 0x9f54588 | u32 |
+| All materials area | 0x1752CF8 | 0x9f52cf8 | box slot array start |
+| Item rare-1 area | 0x01D0FB9 | 0x89d0fb9 | item-flag region (candidate) |
+| Hunter sex | 0x174FCC7 | 0x9f4fcc7 | u8 (0 M / 1 F); name+0x1B |
+| HP current | 0x0E49B16 | 0x9649b16 | in-task u8/u16 |
+| HP recover | 0x0E49B56 | 0x9649b56 | in-task |
+| HP max | 0x0E49B58 | 0x9649b58 | in-task, 150=0x96 |
+| Poison invalid | 0x0E49B26 | 0x9649b26 | u8 |
+| Stamina max | 0x0E4A49A | 0x964a49a | u16 900=0x384 |
+| Sharpness | 0x0E4ACF4 | 0x964acf4 | 2×u16 (color) |
+| LS gauge | 0x0E4AD18 | 0x964ad18 | u16 ×3 |
+| SA gauge | 0x0E4AE0C | 0x964ae0c | u8 |
+| Ammo no-reload | 0x0E4A4F0 | 0x964a4f0 | u8 |
+| Ammo +9 | 0x0E4A4F1 | 0x964a4f1 | u8 |
+| GL overheat | 0x0E4AD1C | 0x964ad1c | u16 |
+| Game speed | 0x0E4A594 | 0x964a594 | f32 1.5/2/4 |
+| Move speed | 0x0D41FC4 | 0x9541fc4 | f32 — same addr as P3 orig |
+| Cat level | 0x17ACF3F | 0x9facf3f | u8 (20=0x14), 5 cats stride 0xA0 |
+| Cat bond | 0x17ACF43 | 0x9facf43 | u8 (0x1A) |
+| Cat skill pts | 0x17ACFB6 | 0x9facfb6 | u16 (250=0xFA) |
+| Cat skills 1/2 | 0x17ACF9C | 0x9facf9c | u32 bitfields |
+| Cat comment | 0x17ACF5E | 0x9facf5e | 0x1A bytes |
+| Cat master name | 0x17ACF7C | 0x9facf7c | u16 |
+| Monster list ptr | 0x19B0AE0 | 0xa1b0ae0 | **0x0A1B0AE0** (corrected) ✓ |
+| Quest time | 0x17B4E68 | 0x9fb4e68 | ±0x4650 u16/u32; NOTE: differs from delta-prediction |
+| Clear quest | 0x17B2CD4 | 0x9fb2cd4 | 0x03 |
+| Quest phase block | 0x13AC044 | 0x9bac044 | == [hpbar] 0x09BAC044 ✓ |
+| Reward infinite | 0x13AC054 | 0x9bac054 | == P3 orig same addr |
+| HUD toggle | 0x17F5C96 | 0x9ff5c96 | u8 |
+| Change-equip toggle | 0x1349364 | 0x9b49364 |  |
+| Yukumo farm unlock | 0x17ADF4C | 0x9fadf4c |  |
+| Hotsprings upgrade | 0x17AEF1D | 0x9faef1d |  |
+| Armor 3-slot region | 0x018396E | 0x898396e | repeats |
+| Weapon 3-slot region | 0x0192F3A | 0x8992f3a |  |
+| Bow attr region | 0x018EB74 | 0x898eb74 |  |
+| Equip skill +32 | 0x017D9BF | 0x897d9bf |  |
+
+## 18. P3HD (NPJB40001) address extrapolation (delta method, from [us]/[item]/[sharp]/[dmg] anchors)
 
 **Method**: HD uses a relocated EBOOT; addresses shift per region. Using verified
 orig↔HD pairs, each HD address is predicted as `HD = orig + delta(region)`.
@@ -402,7 +454,7 @@ orig↔HD pairs, each HD address is predicted as `HD = orig + delta(region)`.
 | Region | delta |
 |---|---|
 | data region (box/pouch/weapon/viewmatrix/task/check…) | **+0x406AB0** (spread 0x403C68–0x406D00) |
-| monster list | +0x507280 |
+| monster list | +0x407280 |
 | player runtime (0x08B2xxxx) | +0x67C0 |
 | code 0x088Exxxx | +0x1AB8 |
 | sharpness/data 0x0897xxxx | +0x5938 |
@@ -439,7 +491,7 @@ the +0x406ABx cluster.
 > differ); outside these clusters the delta method is unreliable.
 
 
-## 18. [cw] MHF1 (ULJM05066): player / guild card text
+## 19. [cw] MHF1 (ULJM05066): player / guild card text
 
 Character-set note: MHF1 name/guild-card text is **UTF-16BE** (2 bytes/char,
 high byte first) — different from P3/P3HD (LE). 8 chars max for names; past that
@@ -453,7 +505,7 @@ the fields bleed into other data (unstable later in game).
 | Title cursor lock | 0x113A7C0 | 0x0993A7C0 | u8: fixed title-cursor slot |
 
 
-## 19. Cross-validation log (all of this project's contribution)
+## 20. Cross-validation log (all of this project's contribution)
 - `0x09DA9860` (hpbar monster list) == `0x08800000 + 0x15A9860` (orig table) ✅
 - Monster HP `+0x246`, MaxHP `+0x288` (hpbar) == orig MHP3RD table ✅
 - sceIo import table (load/item agree) ✅
@@ -462,7 +514,7 @@ the fields bleed into other data (unstable later in game).
 - [cwps] item box `0x09B4C244` == [item] original ✅
 - [cwps] Felyne slot stride +0xA0 == [us] P3HD ✅
 
-## 20. TODO
+## 21. TODO
 - Monster x/y/z coordinates (start near `+0xD4` / use ViewMatrix anchors)
 - Quest info region (name/time/rewards)
 - Player stats (attack/defense/skills)
