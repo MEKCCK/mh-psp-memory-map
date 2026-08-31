@@ -23,8 +23,7 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 patches (event loader slots etc.) |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 | **[us]** | MEKCCK (repo maintainer), measured on device/emulator | P3HD verified values |
-| **[cwps]** | community CWCheat (user archived) — used as a *verification source* | P3 original (ULJM05800) values |
-| **[cw]** | community CWCheat (user archived) — *verification source* | MHF1 (ULJM05066) values |
+| **[cw]** | community CWCheat (user archived) — *verification source* | P3 original (ULJM05800) + MHF1 (ULJM05066) values |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
 > original authors' **public projects** listed above. The PPSSPP in-emulator overlay
@@ -212,7 +211,7 @@ e.g. `0x08A35890` (current head model file_id), `0x0912F54C`. Only for live tool
 > Types: ViewMatrix = `f32[16]` (4×4); printf = code func; CHECK/ADD values `u32`;
 > matrix element layout unverified.
 
-### Player / guild card / box data [cwps]
+### Player / guild card / box data [cw]
 
 | Field | Offset | Absolute | Note |
 |---|---|---|---|
@@ -240,7 +239,7 @@ e.g. `0x08A35890` (current head model file_id), `0x0912F54C`. Only for live tool
 Weapon-use count offsets from table base 0x09BA1C10: GS +0, DB +2, Hammer +4, Lance +6,
 HBG +8, LBG +0xC, LS +0xE, SA +0x10, Gunlance +0x12, Bow +0x14, SnS +0x16, HH +0x18.
 
-### Felyne (cat) data [cwps]
+### Felyne (cat) data [cw]
 
 | Field | Offset | Absolute | Note |
 |---|---|---|---|
@@ -258,7 +257,7 @@ HBG +8, LBG +0xC, LS +0xE, SA +0x10, Gunlance +0x12, Bow +0x14, SnS +0x16, HH +0
 | Cat 2 waterfall/owner | 0x13A65C5 / 0x13A660C | 0x09BA65C5 / 0x09BA660C | **stride +0xA0 (== [us] HD ✓)** |
 | Drink (猫饭) skills | 0x13A5E40 | 0x09BA5E40 | 5×u16+u8 |
 
-### Monster runtime fields [cwps]
+### Monster runtime fields [cw]
 
 | Offset | Field | Source code |
 |---|---|---|
@@ -272,7 +271,7 @@ Body-part resistance base `0x08B24A10` (code semantics, unverified): +0xB32/+0xB
 part-resist=1 (1st/2nd monster at +0x4), +0x280 at `0x08B24A64` = corpse-despawn fast
 (large continuous quests).
 
-### Quest / maps [cwps]
+### Quest / maps [cw]
 
 | Field | Offset | Absolute | Note |
 |---|---|---|---|
@@ -464,10 +463,10 @@ the +0x406ABx cluster.
 - `0x09DA9860` (hpbar monster list) == `0x08800000 + 0x15A9860` (orig table) ✅
 - Monster HP `+0x246`, MaxHP `+0x288` (hpbar) == orig MHP3RD table ✅
 - sceIo import table (load/item agree) ✅
-- [cwps] monster list ptr `0x09DA9860` == [orig]+[hpbar] (third source) ✅
-- [cwps] monster type offset `+0x62` == [orig]/[transmog3] ✅
-- [cwps] item box `0x09B4C244` == [item] original ✅
-- [cwps] Felyne slot stride +0xA0 == [us] P3HD ✅
+- [cw] monster list ptr `0x09DA9860` == [orig]+[hpbar] (third source) ✅
+- [cw] monster type offset `+0x62` == [orig]/[transmog3] ✅
+- [cw] item box `0x09B4C244` == [item] original ✅
+- [cw] Felyne slot stride +0xA0 == [us] P3HD ✅
 - HP-display main code reads HD monster offsets == [orig] full map ✓✓
 - DMG hook 0x088E881C == [dmg] HD MAIN_HOOK; cave 0x0AFF0000 == [dmg] LOAD_ADD ✓
 - Monster list 0x0A1B0AE0 third confirmation (DMG/target-cam codes) ✓
