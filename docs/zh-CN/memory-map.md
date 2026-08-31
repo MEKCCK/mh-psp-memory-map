@@ -22,7 +22,7 @@
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 补丁（事件加载槽等） |
 | **[val]** | 本项目（MEKCCK/ppsspp 内置 overlay） | 仅做**交叉验证/集成**，不产生新地址 |
 | **[us]** | MEKCCK（本仓库维护者）实机/模拟器实测 | P3HD 核验值 |
-| **[cw]** | 社区 CWCheat（用户归档）—— 仅作**验证来源** | P3 普通版（ULJM05800）+ MHF1（ULJM05066）数值 |
+| **[cw]** | 社区 CWCheat（流传较广、具体来源难以逐一证实）—— 仅作**验证参考** | P3 普通版（ULJM05800）+ MHF1（ULJM05066）数值 |
 
 > 声明：本表所有内存知识均来自上述两个原作者的**公开项目**，本项目（PPSSPP 内置
 > overlay）只是把这些已公开的数据**移植进模拟器并交叉核对**，没有一条地址是本项目
