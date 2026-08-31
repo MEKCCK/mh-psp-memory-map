@@ -23,7 +23,7 @@ All addresses are **PSP virtual addresses** (identical on real hardware and PPSS
 | **[fdx]** | SilverJolteon/[FreedomDX](https://github.com/SilverJolteon/FreedomDX) | MHF1 patches (event loader slots etc.) |
 | **[val]** | This project (MEKCCK in-emulator integration) — cross-validation only, no new addresses |
 | **[us]** | MEKCCK (repo maintainer), measured on device/emulator | P3HD verified values |
-| **[cw]** | community CWCheat (user archived) — *verification source* | P3 original (ULJM05800) + MHF1 (ULJM05066) values |
+| **[cw]** | community CWCheat (circulated; individual origin hard to verify) — *verification reference only* | P3 original (ULJM05800) + MHF1 (ULJM05066) values |
 
 > **Attribution:** every piece of memory knowledge in this table comes from the two
 > original authors' **public projects** listed above. The PPSSPP in-emulator overlay
